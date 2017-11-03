@@ -11,5 +11,7 @@ include_directories(Source)
 add_executable(main Test/maincpp.cpp) #remove after pipeline implemented
 
 add_subdirectory(Source/Decoder)
+add_subdirectory(Source/Memory)
 
 target_link_libraries(main decoder)
+target_link_libraries(main memory)
