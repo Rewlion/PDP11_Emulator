@@ -2,6 +2,7 @@
 #include "types.h"
 
 #include <variant>
+#include <string>
 
 namespace PDP11Emulator::Common
 {
@@ -15,7 +16,7 @@ namespace PDP11Emulator::Common
         I_Condition,
         I_Other
     };
-    
+
     enum InstructionType
     {
         I_UNKNOWN,
