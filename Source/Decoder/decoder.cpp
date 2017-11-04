@@ -1,9 +1,9 @@
 #include "decoder.h"
 #include <assert.h>
 
-namespace PDP11Emulator::Decoding
+namespace Decoding
 {
-    using PDP11Emulator::Common::Instruction;
+    using Common::Instruction;
     
     namespace
     {
@@ -12,9 +12,9 @@ namespace PDP11Emulator::Decoding
         const word SingleOperandInstructionMask = 0177700;
         const word BranchInstructionMask        = 0177400;
 
-        inline PDP11Emulator::Common::UnknownInstruction ConstructUnknownInstruction()
+        inline Common::UnknownInstruction ConstructUnknownInstruction()
         {
-            return PDP11Emulator::Common::UnknownInstruction { PDP11Emulator::Common::InstructionGroup::I_Unknown, PDP11Emulator::Common::InstructionType::I_UNKNOWN, "UNKNOWN" };
+            return Common::UnknownInstruction { Common::InstructionGroup::I_Unknown, Common::InstructionType::I_UNKNOWN, "UNKNOWN" };
         }
     }
 
@@ -25,11 +25,11 @@ namespace PDP11Emulator::Decoding
         
         if (it!= DoubleOperandInstructions.end())
         {
-            const PDP11Emulator::Common::InstructionMeta meta = it->second;
+            const Common::InstructionMeta meta = it->second;
             const byte destination = raw & 077;
             const byte source = (raw & 07700) >> 6;
 
-            return PDP11Emulator::Common::DoubleOperandInstruction{ meta, destination, source, opcode };
+            return Common::DoubleOperandInstruction{ meta, destination, source, opcode };
         }
         
         return ConstructUnknownInstruction();
@@ -42,11 +42,11 @@ namespace PDP11Emulator::Decoding
         
         if (it != OneAndHalfInstructions.end())
         {
-            const PDP11Emulator::Common::InstructionMeta meta = it->second;
+            const Common::InstructionMeta meta = it->second;
             const byte destination = raw & 077;
             const byte reg = (raw & 0700) >> 6;
 
-            return PDP11Emulator::Common::OneAndHalfInstruction{ meta, destination, reg, opcode };
+            return Common::OneAndHalfInstruction{ meta, destination, reg, opcode };
         }
         
         return ConstructUnknownInstruction();
@@ -59,10 +59,10 @@ namespace PDP11Emulator::Decoding
         
         if (it != SingleOperandInstructions.end())
         {
-            const PDP11Emulator::Common::InstructionMeta meta = it->second;
+            const Common::InstructionMeta meta = it->second;
             const byte destination = raw & (~SingleOperandInstructionMask);
 
-            return PDP11Emulator::Common::SingleOperandInstruction{ meta, destination, opcode };
+            return Common::SingleOperandInstruction{ meta, destination, opcode };
         }
         
         return ConstructUnknownInstruction();
@@ -75,10 +75,10 @@ namespace PDP11Emulator::Decoding
         
         if (it != BranchInstructions.end())
         {
-            const PDP11Emulator::Common::InstructionMeta meta = it->second;
+            const Common::InstructionMeta meta = it->second;
             const byte offset = raw & (~BranchInstructionMask);
 
-            return PDP11Emulator::Common::SingleOperandInstruction{ meta, offset, opcode };
+            return Common::SingleOperandInstruction{ meta, offset, opcode };
         }
         
         return ConstructUnknownInstruction();
@@ -123,29 +123,29 @@ namespace PDP11Emulator::Decoding
     Common::InstructionGroup  Decoder::GetInstructionGroup(const word raw) const
     {
         if (IsDoubleOperandInstruction(raw))
-            return PDP11Emulator::Common::I_DoubleOperand;
+            return Common::I_DoubleOperand;
 
         if (IsOneAndHalfInstruction(raw))
-            return PDP11Emulator::Common::I_OneAndHalf;
+            return Common::I_OneAndHalf;
 
         if (IsSingleOperandInstruction(raw))
-            return PDP11Emulator::Common::I_SingleOperand;
+            return Common::I_SingleOperand;
 
         if (IsBranchInstruction(raw))
-            return PDP11Emulator::Common::I_Branch;
+            return Common::I_Branch;
 
-        return PDP11Emulator::Common::I_Unknown;
+        return Common::I_Unknown;
     }
     
     Instruction Decoder::Decode(const word raw) const
     {
         switch (GetInstructionGroup(raw))
         {
-        case PDP11Emulator::Common::I_DoubleOperand: return ConstructDoubleOperandInstruction(raw);
-        case PDP11Emulator::Common::I_OneAndHalf:    return ConstructOneAndHalfInstruction(raw);
-        case PDP11Emulator::Common::I_SingleOperand: return ConstructSingleOperandInstruction(raw);
-        case PDP11Emulator::Common::I_Branch:        return ConstructBranchInstruction(raw);
-        case PDP11Emulator::Common::I_Unknown:       return ConstructUnknownInstruction();
+        case Common::I_DoubleOperand: return ConstructDoubleOperandInstruction(raw);
+        case Common::I_OneAndHalf:    return ConstructOneAndHalfInstruction(raw);
+        case Common::I_SingleOperand: return ConstructSingleOperandInstruction(raw);
+        case Common::I_Branch:        return ConstructBranchInstruction(raw);
+        case Common::I_Unknown:       return ConstructUnknownInstruction();
 
         default:
             assert(false);

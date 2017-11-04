@@ -7,7 +7,7 @@ namespace
     static dword memorySize = 1024 * 64;
 }
 
-namespace PDP11Emulator::MemoryManagement
+namespace MemoryManagement
 {
     MemoryManager::MemoryManager() {
         memory_ = new byte [memorySize];

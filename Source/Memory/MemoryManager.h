@@ -2,7 +2,7 @@
 
 #include <Common/types.h>
 
-namespace PDP11Emulator::MemoryManagement {
+namespace MemoryManagement {
 
     class MemoryManager {
     public:

@@ -4,7 +4,7 @@
 #include <variant>
 #include <string>
 
-namespace PDP11Emulator::Common
+namespace Common
 {
     enum InstructionGroup
     {
@@ -105,8 +105,8 @@ namespace PDP11Emulator::Common
     
     struct InstructionMeta
     {
-        const PDP11Emulator::Common::InstructionGroup Group;
-        const PDP11Emulator::Common::InstructionType Type;
+        const Common::InstructionGroup Group;
+        const Common::InstructionType Type;
         const std::string Name;
     };
     

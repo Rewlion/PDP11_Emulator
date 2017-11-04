@@ -2,6 +2,6 @@
 
 int main()
 {
-    PDP11Emulator::Decoding::Decoder decoder;
+    Decoding::Decoder decoder;
     decoder.Decode(0072000);
 }

@@ -5,10 +5,10 @@
 
 #include <map>
 
-namespace PDP11Emulator::Decoding
+namespace Decoding
 {
     typedef word opcode;
 
-    typedef PDP11Emulator::Common::InstructionMeta IsaEntry;
+    typedef Common::InstructionMeta IsaEntry;
     typedef std::map<opcode, IsaEntry> IsaTable;	
 }
