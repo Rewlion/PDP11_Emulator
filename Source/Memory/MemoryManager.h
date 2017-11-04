@@ -6,7 +6,7 @@ namespace PDP11Emulator::MemoryManagement {
 
     class MemoryManager {
     public:
-        MemoryManager() = default;
+        MemoryManager();
         ~MemoryManager();
 
         byte getByteAt(word address) const;

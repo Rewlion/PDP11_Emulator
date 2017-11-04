@@ -10,19 +10,19 @@ namespace PDP11Emulator::Decoding
     {
     public:
         Decoder() = default;
-        PDP11Emulator::Common::Instruction Decode(const uint16 raw) const;
+        PDP11Emulator::Common::Instruction Decode(const word raw) const;
     
     private:
-        inline bool IsDoubleOperandInstruction(const uint16 raw) const;
-        inline bool IsOneAndHalfInstruction(const uint16 raw) const;
-        inline bool IsSingleOperandInstruction(const uint16 raw) const;
-        inline bool IsBranchInstruction(const uint16 raw) const;
-        Common::InstructionGroup  GetInstructionGroup(const uint16 raw) const;
+        inline bool IsDoubleOperandInstruction(const word raw) const;
+        inline bool IsOneAndHalfInstruction(const word raw) const;
+        inline bool IsSingleOperandInstruction(const word raw) const;
+        inline bool IsBranchInstruction(const word raw) const;
+        Common::InstructionGroup  GetInstructionGroup(const word raw) const;
     
-        PDP11Emulator::Common::Instruction ConstructDoubleOperandInstruction(const uint16 raw) const;
-        PDP11Emulator::Common::Instruction ConstructOneAndHalfInstruction(const uint16 raw) const;
-        PDP11Emulator::Common::Instruction ConstructSingleOperandInstruction(const uint16 raw) const;
-        PDP11Emulator::Common::Instruction ConstructBranchInstruction(const uint16 raw) const;
+        PDP11Emulator::Common::Instruction ConstructDoubleOperandInstruction(const word raw) const;
+        PDP11Emulator::Common::Instruction ConstructOneAndHalfInstruction(const word raw) const;
+        PDP11Emulator::Common::Instruction ConstructSingleOperandInstruction(const word raw) const;
+        PDP11Emulator::Common::Instruction ConstructBranchInstruction(const word raw) const;
     
     private:
         const IsaTable SingleOperandInstructions = {

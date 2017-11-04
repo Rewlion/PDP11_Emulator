@@ -118,31 +118,31 @@ namespace PDP11Emulator::Common
     struct DoubleOperandInstruction
     {
         const InstructionMeta Meta;
-        const uint8 Destination;
-        const uint8 Source;
-        const uint16 Opcode;
+        const byte Destination;
+        const byte Source;
+        const word Opcode;
     };
     
     struct OneAndHalfInstruction
     {
         const InstructionMeta Meta;
-        const uint8 Destination;
-        const uint8 Register;
-        const uint16 Opcode;
+        const byte Destination;
+        const byte Register;
+        const word Opcode;
     };
     
     struct SingleOperandInstruction
     {
         const InstructionMeta Meta;
-        const uint8 Destination;
-        const uint16 Opcode;
+        const byte Destination;
+        const word Opcode;
     };
     
     struct BranchInstruction
     {
         const InstructionMeta Meta;
-        const uint8 Offset;
-        const uint8 BaseCode;
+        const byte Offset;
+        const byte BaseCode;
     };
     
     typedef std::variant<UnknownInstruction, 

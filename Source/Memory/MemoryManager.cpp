@@ -4,7 +4,7 @@
 
 namespace
 {
-    static uint32 memorySize = 1024 * 64;
+    static dword memorySize = 1024 * 64;
 }
 
 namespace PDP11Emulator::MemoryManagement
@@ -17,14 +17,14 @@ namespace PDP11Emulator::MemoryManagement
         delete[] memory_;
     }
 
-    byte MemoryManager::getByteAt(uint16 address) const {
+    byte MemoryManager::getByteAt(word address) const {
         byte* mem = memory_ + address;
 
         return *mem;
     }
 
 
-    word MemoryManager::getWordAt(uint16 address) const {
+    word MemoryManager::getWordAt(word address) const {
         byte* mem = memory_ + address;
 
         return *(reinterpret_cast<word*>(mem));
