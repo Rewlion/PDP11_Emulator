@@ -12,4 +12,4 @@ add_executable(main Test/maincpp.cpp) #remove after pipeline implemented
 
 add_subdirectory(Source/functional_simulator)
 
-target_link_libraries(main decoder memory functional_simulator)
+target_link_libraries(main decoder register memory functional_simulator)

@@ -9,9 +9,10 @@ project(functional_simulator)
 set(SOURCE_LIST functional_simulator.cpp
                 functional_simulator.h)
 
-include_directories(.)
+include_directories(Common Utils)
 
 add_subdirectory(Modules/Decoder)
 add_subdirectory(Modules/Memory)
+add_subdirectory(Modules/Register)
 
 add_library(functional_simulator STATIC ${SOURCE_LIST})
