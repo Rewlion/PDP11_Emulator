@@ -1,4 +1,4 @@
-#include <Decoder/decoder.h>
+#include <functional_simulator/Modules/Decoder/decoder.h>
 
 int main()
 {

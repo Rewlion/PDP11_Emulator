@@ -8,8 +8,8 @@ project(decoder)
 
 set(SOURCE_LIST decoder.cpp
                 decoder.h
-                utils.h
-                ../Common/types.h
-                ../Common/instruction.h)
+                utils.h)
+
+include_directories(../../../)
 
 add_library(decoder STATIC ${SOURCE_LIST})

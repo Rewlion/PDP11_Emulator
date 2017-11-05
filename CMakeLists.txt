@@ -4,14 +4,12 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-project (pdp11_emulator)
+project (test_functional_simulator)
 
 include_directories(Source)
 
 add_executable(main Test/maincpp.cpp) #remove after pipeline implemented
 
-add_subdirectory(Source/Decoder)
-add_subdirectory(Source/Memory)
+add_subdirectory(Source/functional_simulator)
 
-target_link_libraries(main decoder)
-target_link_libraries(main memory)
+target_link_libraries(main decoder memory functional_simulator)

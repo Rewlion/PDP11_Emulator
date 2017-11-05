@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Common/types.h>
-#include <Common/instruction.h>
+#include <functional_simulator/Common/types.h>
+#include <functional_simulator/Common/instruction.h>
 
 #include <map>
 

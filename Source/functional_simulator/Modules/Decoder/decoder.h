@@ -2,8 +2,7 @@
 
 #include "utils.h"
 
-#include <Common/instruction.h>
-
+#include <functional_simulator/Common/instruction.h>
 namespace Decoding
 {
     class Decoder
