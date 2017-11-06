@@ -31,5 +31,6 @@ namespace Runtime
         std::unique_ptr<word[]> Program;
         qword CurrentInstructionsNumber;
         qword CurrentInstruction;
+        bool IsExecutionOver;
     };
 }

@@ -57,6 +57,7 @@ namespace Runtime
     Simulator::Simulator(const std::string fileWithProgram)
         : CurrentInstructionsNumber(0)
         , CurrentInstruction(0)
+        , IsExecutionOver(true)
     {
         LoadProgram(fileWithProgram);
     }
@@ -64,6 +65,7 @@ namespace Runtime
     Simulator::Simulator()
         : CurrentInstructionsNumber(0)
         , CurrentInstruction(0)
+        , IsExecutionOver(true)
     {
     }
 
@@ -87,7 +89,7 @@ namespace Runtime
 
     void Simulator::Run()
     {
-        for (int i = 0; i < CurrentInstructionsNumber; ++i)
+        while(!IsExecutionOver)
         {
             const word rawInstruction = GetPC(RegistersManager);
             const Common::Instruction instruction = Decoder.Decode(rawInstruction);
@@ -99,6 +101,7 @@ namespace Runtime
     {
         CurrentInstructionsNumber = sizeInBytes / sizeof(word);
         CurrentInstruction = 0;
+        IsExecutionOver = false;
         Program.reset(new word[sizeInBytes /2]);
     }
 
