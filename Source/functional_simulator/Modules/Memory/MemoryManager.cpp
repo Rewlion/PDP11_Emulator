@@ -31,4 +31,16 @@ namespace MemoryManagement
         return *(reinterpret_cast<word*>(mem));
     }
 
+    void MemoryManager::setByteAt(const word relativeAddress, const byte value) const
+    {
+        byte* const address = memory_ + relativeAddress;
+        *address = value;
+    }
+
+    void MemoryManager::setWordAt(const word relativeAddress, const word value) const
+    {
+        byte* const address = memory_ + relativeAddress;
+        *(reinterpret_cast<word*>(address)) = value;
+    }
+
 }

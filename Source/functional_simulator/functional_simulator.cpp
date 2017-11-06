@@ -1,5 +1,7 @@
 #include "functional_simulator.h"
 
+#include <functional_simulator\Modules\Memory\utils.h>
+
 #include <fstream>
 #include <exception>
 
@@ -13,6 +15,16 @@ namespace
     inline void SetPC(RegistersManagement::RegisterManager& registerManager, const word value)
     {
         registerManager.SetRegister(RegistersManagement::R7, value);
+    }
+
+    inline byte GetAddressingMode(const byte reg)
+    {
+        return (reg & 070) >> 3;
+    }
+
+    inline RegistersManagement::Register GetRegisterNumber(const byte reg)
+    {
+        return RegistersManagement::Register(reg & 07);
     }
 
     class InstructionExecutor
@@ -44,6 +56,92 @@ namespace
 
         void operator()(const Common::BranchInstruction& instruction)
         {
+        }
+
+    private:
+        word GetSourceFromRegister(const byte reg, const bool isByteOperation)
+        {
+            const byte mode = GetAddressingMode(reg);
+            const RegistersManagement::Register regNumber = GetRegisterNumber(reg);
+            const word valueInRegister = RegistersManager.GetRegister(regNumber);
+
+            switch (mode)
+            {
+            case MemoryManagement::Register:
+                return RegistersManager.GetRegister(regNumber);
+
+            case MemoryManagement::RegisterDeferred:
+            {
+                const word address = RegistersManager.GetRegister(regNumber);
+                const word source = MemoryManager.getWordAt(address);
+                return source;
+            }
+
+            case MemoryManagement::Autodecrement:
+            {
+                if (isByteOperation)
+                {
+                    RegistersManager.SetRegister(regNumber, valueInRegister - sizeof(byte));
+                    const word source = MemoryManager.getWordAt(valueInRegister);
+                    return source;
+                }
+                else
+                {
+                    RegistersManager.SetRegister(regNumber, valueInRegister - sizeof(word));
+                    const word source = MemoryManager.getWordAt(valueInRegister);
+                    return source;
+                }
+            }
+
+            case MemoryManagement::AutodecrementDeferred:
+            {
+                if (isByteOperation)
+                {
+                    RegistersManager.SetRegister(regNumber, valueInRegister - sizeof(byte));
+                    const word source = MemoryManager.getWordAt(valueInRegister);
+                    return source;
+                }
+                else
+                {
+                    RegistersManager.SetRegister(regNumber, valueInRegister - sizeof(word));
+                    const word source = MemoryManager.getWordAt(valueInRegister);
+                    return source;
+                }
+            }
+
+            case MemoryManagement::Autoincrement:
+            {
+                if (isByteOperation)
+                {
+                    const word source = MemoryManager.getWordAt(valueInRegister);
+                    RegistersManager.SetRegister(regNumber, valueInRegister + sizeof(byte));
+                    return source;
+                }
+                else
+                {
+                    const word source = MemoryManager.getWordAt(valueInRegister);
+                    RegistersManager.SetRegister(regNumber, valueInRegister + sizeof(word));
+                    return source;
+                }
+            }
+
+            case MemoryManagement::AutoincrementDeferred:
+            {
+                const word sourceAddress = MemoryManager.getWordAt(valueInRegister);
+                const word source = MemoryManager.getWordAt(sourceAddress);
+                RegistersManager.SetRegister(regNumber, valueInRegister + sizeof(word));
+                return source;
+            }
+
+            case MemoryManagement::Index:
+                assert(!"not implemented");
+                break;
+
+            case MemoryManagement::IndexDeferred:
+                assert(!"not implemented");
+                break;
+            }
+
         }
 
     private:

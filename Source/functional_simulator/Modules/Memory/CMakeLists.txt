@@ -9,6 +9,7 @@ project(memory)
 include_directories(../../../)
 
 set(SOURCE_LIST MemoryManager.cpp
-                MemoryManager.h)
+                MemoryManager.h
+                utils.h)
 
 add_library(memory STATIC ${SOURCE_LIST})
