@@ -2,7 +2,6 @@
 
 #include <fstream>
 #include <exception>
-#include <iostream>
 
 namespace
 {
@@ -15,6 +14,42 @@ namespace
     {
         registerManager.SetRegister(RegistersManagement::R7, value);
     }
+
+    class InstructionExecutor
+    {
+    public:
+        InstructionExecutor(RegistersManagement::RegisterManager& registerManager, MemoryManagement::MemoryManager& memoryManager)
+            : MemoryManager(memoryManager)
+            , RegistersManager(registerManager)
+        {
+        }
+
+        void operator()(const Common::UnknownInstruction& instruction)
+        {
+
+        }
+
+        void operator()(const Common::DoubleOperandInstruction& instruction)
+        {
+        }
+
+        void operator()(const Common::OneAndHalfInstruction& instruction)
+        {
+        }
+
+        void operator()(const Common::SingleOperandInstruction& instruction)
+        {
+            
+        }
+
+        void operator()(const Common::BranchInstruction& instruction)
+        {
+        }
+
+    private:
+        MemoryManagement::MemoryManager& MemoryManager;
+        RegistersManagement::RegisterManager& RegistersManager;
+    };
 }
 
 namespace Runtime
@@ -69,6 +104,7 @@ namespace Runtime
 
     void Simulator::Execute(const Common::Instruction& instruction)
     {
-
+        InstructionExecutor executor(RegistersManager, MemoryManager);
+        std::visit(executor, instruction);
     }
 }
