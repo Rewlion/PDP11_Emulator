@@ -4,11 +4,11 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-project(register)
+project(registers)
 
 include_directories(../../../)
 
 set(SOURCE_LIST RegisterManager.cpp
                 RegisterManager.h)
 
-add_library(register STATIC ${SOURCE_LIST})
+add_library(registers STATIC ${SOURCE_LIST})
