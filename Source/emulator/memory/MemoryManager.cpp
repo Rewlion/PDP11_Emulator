@@ -7,7 +7,7 @@ namespace
     constexpr dword getSimulatedMachineMemorySize() {return 1024 * 64;}
 }
 
-namespace MemoryManagement
+namespace EmulatorComponents::MemoryManagement
 {
     MemoryManager::MemoryManager()
         : memory_(new byte[getSimulatedMachineMemorySize()])

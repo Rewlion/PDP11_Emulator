@@ -1,21 +1,21 @@
 #pragma once
 
-#include <functional_simulator/Common/instruction.h>
-#include <functional_simulator/Common/types.h>
-#include <functional_simulator/Modules/Decoder/decoder.h>
-#include <functional_simulator/Modules/Memory/MemoryManager.h>
-#include <functional_simulator/Modules/Register/RegisterManager.h>
+#include <emulator/common/instruction.h>
+#include <emulator/common/types.h>
+#include <emulator/cpu/decoder.h>
+#include <emulator/cpu/RegisterManager.h>
+#include <emulator/memory/MemoryManager.h>
 
 #include <string>
 #include <memory>
 
-namespace Runtime
+namespace EmulatorComponents
 {
-    class Simulator
+    class Cpu
     {
     public:
-        explicit Simulator(const std::string fileWithProgram);
-        Simulator();
+        explicit Cpu(const std::string fileWithProgram);
+        Cpu();
 
         void LoadProgram(const std::string fileWithProgram);
         void Run();
@@ -24,7 +24,7 @@ namespace Runtime
         void LoadNewContext(const int size);
         void Execute(const Common::Instruction& instruction);
     private:
-        MemoryManagement::MemoryManager MemoryManager;
+        MemoryManagement::MemoryManager Memory;
         Decoding::Decoder Decoder;
         RegistersManagement::RegisterManager RegistersManager;
 

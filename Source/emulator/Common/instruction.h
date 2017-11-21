@@ -105,8 +105,8 @@ namespace Common
     
     struct InstructionMeta
     {
-        const Common::InstructionGroup Group;
-        const Common::InstructionType Type;
+        const InstructionGroup Group;
+        const InstructionType Type;
         const std::string Name;
     };
     

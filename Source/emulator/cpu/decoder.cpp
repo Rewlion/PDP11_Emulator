@@ -1,7 +1,7 @@
 #include "decoder.h"
 #include <assert.h>
 
-namespace Decoding
+namespace EmulatorComponents::Decoding
 {
     using Common::Instruction;
     

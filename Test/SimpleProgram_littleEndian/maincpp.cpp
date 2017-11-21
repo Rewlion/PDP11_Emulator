@@ -1,8 +1,8 @@
-#include <functional_simulator/functional_simulator.h>
+#include <emulator/cpu/cpu.h>
 
 int main()
 {
-    Runtime::Simulator pdp11;
+    EmulatorComponents::Cpu pdp11;
     pdp11.LoadProgram("program.txt");
     pdp11.Run();
 }

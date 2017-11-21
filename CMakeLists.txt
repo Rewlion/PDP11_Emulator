@@ -4,14 +4,9 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-set(EXE SimpleProgram_littleEndian)
-project (${EXE})
+project (Main)
 
 include_directories(Source)
 
-add_executable(${EXE} Test/SimpleProgram_littleEndian/maincpp.cpp)
-file(COPY Test/SimpleProgram_littleEndian/program.txt DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-
-add_subdirectory(Source/functional_simulator)
-
-target_link_libraries(${EXE} decoder registers memory functional_simulator)
+add_subdirectory(Source)
+add_subdirectory(Test)

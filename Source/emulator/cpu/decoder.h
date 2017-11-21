@@ -1,10 +1,14 @@
 #pragma once
 
-#include "utils.h"
+#include <emulator/common/instruction.h>
 
-#include <functional_simulator/Common/instruction.h>
-namespace Decoding
+#include <map>
+
+namespace EmulatorComponents::Decoding
 {
+    typedef Common::InstructionMeta IsaEntry;
+    typedef std::map<word, IsaEntry> IsaTable;
+
     class Decoder
     {
     public:
