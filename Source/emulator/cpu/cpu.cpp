@@ -1,8 +1,9 @@
 #include "cpu.h"
 
+#include <emulator/common/error.h>
+
 #include <assert.h>
 #include <fstream>
-#include <exception>
 
 namespace EmulatorComponents
 {
@@ -29,7 +30,7 @@ namespace EmulatorComponents
 
             void operator()(const Common::UnknownInstruction& instruction)
             {
-
+                throw Common::Error("Unknown instruction", Common::Critical);
             }
 
             void operator()(const Common::DoubleOperandInstruction& instruction)
@@ -349,6 +350,9 @@ namespace EmulatorComponents
 
     void Cpu::Run()
     {
+        const word firstInstruction = Memory->getFirstInstruction();
+        RegistersManager.SetPC(firstInstruction);
+
         while(!IsExecutionOver)
         {
             const word rawInstruction = RegistersManager.GetPC();
