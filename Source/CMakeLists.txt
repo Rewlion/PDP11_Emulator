@@ -11,7 +11,9 @@ set(EMULATOR_SOURCE_LIST emulator/emulator.cpp
                          emulator/emulator.h)
 
 set(COMMON_SOURCE_LIST  emulator/common/instruction.h
-                        emulator/common/types.h )
+                        emulator/common/types.h 
+                        emulator/common/error.cpp
+                        emulator/common/error.h)
 
 
 set(CPU_SOURCE_LIST emulator/cpu/cpu.cpp

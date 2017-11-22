@@ -349,6 +349,9 @@ namespace EmulatorComponents
 
     void Cpu::Run()
     {
+        const word firstInstruction = Memory->getFirstInstruction();
+        RegistersManager.SetPC(firstInstruction);
+
         while(!IsExecutionOver)
         {
             const word rawInstruction = RegistersManager.GetPC();
