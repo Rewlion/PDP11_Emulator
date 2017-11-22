@@ -21,8 +21,8 @@ namespace EmulatorComponents
         class InstructionExecutor
         {
         public:
-            InstructionExecutor(RegistersManagement::RegisterManager& registerManager, MemoryManagement::MemoryManager& memoryManager)
-                : MemoryManager(memoryManager)
+            InstructionExecutor(RegistersManagement::RegisterManager& registerManager, MemoryManagerPtr memoryManager)
+                : Memory(memoryManager)
                 , RegistersManager(registerManager)
             {
             }
@@ -265,7 +265,7 @@ namespace EmulatorComponents
                 case MemoryManagement::RegisterDeferred:
                 {
                     const word address = RegistersManager.GetRegister(regNumber);
-                    const word source = MemoryManager.getWordAt(address);
+                    const word source = Memory->getWordAt(address);
                     return source;
                 }
 
@@ -274,13 +274,13 @@ namespace EmulatorComponents
                     if (isByteOperation)
                     {
                         RegistersManager.SetRegister(regNumber, valueInRegister - sizeof(byte));
-                        const word source = MemoryManager.getWordAt(valueInRegister);
+                        const word source = Memory->getWordAt(valueInRegister);
                         return source;
                     }
                     else
                     {
                         RegistersManager.SetRegister(regNumber, valueInRegister - sizeof(word));
-                        const word source = MemoryManager.getWordAt(valueInRegister);
+                        const word source = Memory->getWordAt(valueInRegister);
                         return source;
                     }
                 }
@@ -290,13 +290,13 @@ namespace EmulatorComponents
                     if (isByteOperation)
                     {
                         RegistersManager.SetRegister(regNumber, valueInRegister - sizeof(byte));
-                        const word source = MemoryManager.getWordAt(valueInRegister);
+                        const word source = Memory->getWordAt(valueInRegister);
                         return source;
                     }
                     else
                     {
                         RegistersManager.SetRegister(regNumber, valueInRegister - sizeof(word));
-                        const word source = MemoryManager.getWordAt(valueInRegister);
+                        const word source = Memory->getWordAt(valueInRegister);
                         return source;
                     }
                 }
@@ -305,13 +305,13 @@ namespace EmulatorComponents
                 {
                     if (isByteOperation)
                     {
-                        const word source = MemoryManager.getWordAt(valueInRegister);
+                        const word source = Memory->getWordAt(valueInRegister);
                         RegistersManager.SetRegister(regNumber, valueInRegister + sizeof(byte));
                         return source;
                     }
                     else
                     {
-                        const word source = MemoryManager.getWordAt(valueInRegister);
+                        const word source = Memory->getWordAt(valueInRegister);
                         RegistersManager.SetRegister(regNumber, valueInRegister + sizeof(word));
                         return source;
                     }
@@ -319,8 +319,8 @@ namespace EmulatorComponents
 
                 case MemoryManagement::AutoincrementDeferred:
                 {
-                    const word sourceAddress = MemoryManager.getWordAt(valueInRegister);
-                    const word source = MemoryManager.getWordAt(sourceAddress);
+                    const word sourceAddress = Memory->getWordAt(valueInRegister);
+                    const word source = Memory->getWordAt(sourceAddress);
                     RegistersManager.SetRegister(regNumber, valueInRegister + sizeof(word));
                     return source;
                 }
@@ -336,42 +336,15 @@ namespace EmulatorComponents
 
             }
         private:
-            MemoryManagement::MemoryManager& MemoryManager;
+            MemoryManagerPtr Memory;
             RegistersManagement::RegisterManager& RegistersManager;
         };
     }
 
-    Cpu::Cpu(const std::string fileWithProgram)
-        : CurrentInstructionsNumber(0)
-        , CurrentInstruction(0)
+    Cpu::Cpu(MemoryManagerPtr memory)
+        : Memory(memory)
         , IsExecutionOver(true)
     {
-        LoadProgram(fileWithProgram);
-    }
-
-    Cpu::Cpu()
-        : CurrentInstructionsNumber(0)
-        , CurrentInstruction(0)
-        , IsExecutionOver(true)
-    {
-    }
-
-    void Cpu::LoadProgram(const std::string fileWithProgram)
-    {
-        std::ifstream file(fileWithProgram, std::ifstream::ate | std::ifstream::binary);
-        if (!file.is_open())
-            throw std::runtime_error("unable to open the file with program");
-
-        const auto size = file.tellg();
-        if (size % sizeof(word))
-            throw std::runtime_error("size of loaded program is not multiples of word");
-
-        LoadNewContext(size);
-
-        file.seekg(0, file.beg);
-        file.read(reinterpret_cast<char*>(Program.get()), size);
-
-        RegistersManager.SetPC(Program[0]);
     }
 
     void Cpu::Run()
@@ -382,14 +355,6 @@ namespace EmulatorComponents
             const Common::Instruction instruction = Decoder.Decode(rawInstruction);
             Execute(instruction);
         }
-    }
-
-    void Cpu::LoadNewContext(const int sizeInBytes)
-    {
-        CurrentInstructionsNumber = sizeInBytes / sizeof(word);
-        CurrentInstruction = 0;
-        IsExecutionOver = false;
-        Program.reset(new word[sizeInBytes /2]);
     }
 
     void Cpu::Execute(const Common::Instruction& instruction)
