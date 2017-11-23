@@ -14,6 +14,13 @@ namespace EmulatorComponents
             return (reg & 070) >> 3;
         }
 
+        inline word ConvertRegisterNumberToAddress(const byte reg)
+        {
+            assert((reg & 0770) == 0);//check that addressing mode is Register
+
+            return 0170000 | (reg & 07);
+        }
+
         inline RegistersManagement::Register GetRegisterNumber(const byte reg)
         {
             return RegistersManagement::Register(reg & 07);
@@ -252,78 +259,55 @@ namespace EmulatorComponents
             }
 
         private:
-            word GetSourceFromRegister(const byte reg, const bool isByteOperation)
+            // Get a source's address accounting an addressing mode.
+            // Returns register address(0170000-0170007) if dst - register.
+            word GetSourceAddress(const byte reg, [[maybe_unused]] const bool isByteOperation)
             {
-                const byte mode = GetAddressingMode(reg);
-                const RegistersManagement::Register regNumber = GetRegisterNumber(reg);
-                const word valueInRegister = RegistersManager.GetRegister(regNumber);
+                const byte addressingMode = GetAddressingMode(reg);
+                const RegistersManagement::Register registerNumber = GetRegisterNumber(reg);
+                const word valueInRegister = RegistersManager.GetRegister(registerNumber);
 
-                switch (mode)
+                switch (addressingMode)
                 {
                 case MemoryManagement::Register:
-                    return RegistersManager.GetRegister(regNumber);
+                    return ConvertRegisterNumberToAddress(registerNumber);
 
                 case MemoryManagement::RegisterDeferred:
                 {
-                    const word address = RegistersManager.GetRegister(regNumber);
-                    const word source = Memory->getWordAt(address);
-                    return source;
+                    const word address = RegistersManager.GetRegister(registerNumber);
+                    return address;
                 }
 
                 case MemoryManagement::Autodecrement:
                 {
-                    if (isByteOperation)
-                    {
-                        RegistersManager.SetRegister(regNumber, valueInRegister - sizeof(byte));
-                        const word source = Memory->getWordAt(valueInRegister);
-                        return source;
-                    }
-                    else
-                    {
-                        RegistersManager.SetRegister(regNumber, valueInRegister - sizeof(word));
-                        const word source = Memory->getWordAt(valueInRegister);
-                        return source;
-                    }
+                    const word subtrahend = isByteOperation ? sizeof(byte) : sizeof(word);
+                    RegistersManager.SetRegister(registerNumber, valueInRegister - subtrahend);
+
+                    return ConvertRegisterNumberToAddress(registerNumber);
                 }
 
                 case MemoryManagement::AutodecrementDeferred:
                 {
-                    if (isByteOperation)
-                    {
-                        RegistersManager.SetRegister(regNumber, valueInRegister - sizeof(byte));
-                        const word source = Memory->getWordAt(valueInRegister);
-                        return source;
-                    }
-                    else
-                    {
-                        RegistersManager.SetRegister(regNumber, valueInRegister - sizeof(word));
-                        const word source = Memory->getWordAt(valueInRegister);
-                        return source;
-                    }
+                    const word subtrahend = sizeof(word);
+                    RegistersManager.SetRegister(registerNumber, valueInRegister - subtrahend);
+
+                    return valueInRegister;
                 }
 
                 case MemoryManagement::Autoincrement:
                 {
-                    if (isByteOperation)
-                    {
-                        const word source = Memory->getWordAt(valueInRegister);
-                        RegistersManager.SetRegister(regNumber, valueInRegister + sizeof(byte));
-                        return source;
-                    }
-                    else
-                    {
-                        const word source = Memory->getWordAt(valueInRegister);
-                        RegistersManager.SetRegister(regNumber, valueInRegister + sizeof(word));
-                        return source;
-                    }
+                    const word addend = isByteOperation ? sizeof(byte) : sizeof(word);
+                    RegistersManager.SetRegister(registerNumber, valueInRegister + addend);
+
+                    return ConvertRegisterNumberToAddress(registerNumber);
                 }
 
                 case MemoryManagement::AutoincrementDeferred:
                 {
-                    const word sourceAddress = Memory->getWordAt(valueInRegister);
-                    const word source = Memory->getWordAt(sourceAddress);
-                    RegistersManager.SetRegister(regNumber, valueInRegister + sizeof(word));
-                    return source;
+                    const word addend = sizeof(word);
+                    RegistersManager.SetRegister(registerNumber, valueInRegister + addend);
+
+                    return valueInRegister;
                 }
 
                 case MemoryManagement::Index:
@@ -334,7 +318,6 @@ namespace EmulatorComponents
                     assert(!"not implemented");
                     break;
                 }
-
             }
         private:
             MemoryManagerPtr Memory;
