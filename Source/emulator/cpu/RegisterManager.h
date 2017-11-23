@@ -63,6 +63,11 @@ namespace EmulatorComponents::RegistersManagement
     {
     public:
         
+        inline void IncPC()
+        {
+            Registers[R7] = Registers[R7] + sizeof(word);
+        }
+
         inline word GetPC()
         {
             return GetRegister(R7);

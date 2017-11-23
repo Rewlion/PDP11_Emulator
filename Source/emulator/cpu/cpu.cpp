@@ -9,9 +9,22 @@ namespace EmulatorComponents
 {
     namespace
     {
+        inline bool IsRegisterAddress(const word address)
+        {
+            if ((address & 0170007) != 0)
+                return true;
+            else
+                return false;
+        }
+
         inline byte GetAddressingMode(const byte reg)
         {
             return (reg & 070) >> 3;
+        }
+
+        inline RegistersManagement::Register ConvertRegisterAddressToRegisterNumber(const word address)
+        {
+            return RegistersManagement::Register(address & 07);
         }
 
         inline word ConvertRegisterNumberToAddress(const byte reg)
@@ -45,6 +58,7 @@ namespace EmulatorComponents
                 switch (instruction.Meta.Type)
                 {
                 case Common::I_MOV:
+                    ExecuteMOV(instruction);
                     break;
 
                 case Common::I_MOVB:
@@ -259,6 +273,33 @@ namespace EmulatorComponents
             }
 
         private:
+            void ExecuteMOV(const Common::DoubleOperandInstruction& instruction)
+            {
+                const word sourceValue = ReadWord(GetSourceAddress(instruction.Source, false));
+                SetWord(GetSourceAddress(instruction.Destination, false), sourceValue);
+
+                RegistersManager.IncPC();
+            }
+
+            void SetWord(const word address, const word value)
+            {
+                if (IsRegisterAddress(address))
+                    RegistersManager.SetRegister(ConvertRegisterAddressToRegisterNumber(address), value);
+                else
+                    Memory->setWordAt(address, value);
+            }
+
+            word ReadWord(const word address)
+            {
+                if (IsRegisterAddress(address))
+                {
+                    const word valueInRegister = RegistersManager.GetRegister(ConvertRegisterAddressToRegisterNumber(address));
+                    return valueInRegister;
+                }
+
+                return Memory->getWordAt(address);
+            }
+
             // Get a source's address accounting an addressing mode.
             // Returns register address(0170000-0170007) if dst - register.
             word GetSourceAddress(const byte reg, [[maybe_unused]] const bool isByteOperation)
