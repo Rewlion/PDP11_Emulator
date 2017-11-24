@@ -9,6 +9,12 @@ namespace EmulatorComponents
 {
     namespace
     {
+
+        inline byte GetWordMSB(const word value)
+        {
+            return (1 < 15) & value;
+        }
+
         inline bool IsRegisterAddress(const word address)
         {
             if ((address & 0170007) != 0)
@@ -141,6 +147,7 @@ namespace EmulatorComponents
                     break;
 
                 case Common::I_INC:
+                    ExecuteINC(instruction);
                     break;
 
                 case Common::I_INCB:
@@ -289,6 +296,21 @@ namespace EmulatorComponents
                 RegistersManager.SetFlag(RegistersManagement::Overflow, 0);
                 RegistersManager.SetFlag(RegistersManagement::Sign, 0);
                 RegistersManager.SetFlag(RegistersManagement::Zero, 1);
+            }
+
+            void ExecuteINC(const Common::SingleOperandInstruction& instruction)
+            {
+                const word valueInRegister = ReadWord(GetSourceAddress(instruction.Destination, false));
+                const word result = valueInRegister + 1;
+
+                SetWord(GetSourceAddress(instruction.Destination, false), result);
+
+                const byte overflowBit = result < valueInRegister ? 1 : 0;
+                const byte zeroBit = result == 0 ? 1 : 0;
+                const byte msb = GetWordMSB(result);
+                RegistersManager.SetFlag(RegistersManagement::Overflow, overflowBit);
+                RegistersManager.SetFlag(RegistersManagement::Zero, zeroBit);
+                RegistersManager.SetFlag(RegistersManagement::Sign, msb);
             }
 
             void SetWord(const word address, const word value)
