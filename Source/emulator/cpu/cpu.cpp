@@ -128,6 +128,7 @@ namespace EmulatorComponents
                 switch (instruction.Meta.Type)
                 {
                 case Common::I_CLR:
+                    ExecuteCLR(instruction);
                     break;
 
                 case Common::I_CLRB:
@@ -281,6 +282,15 @@ namespace EmulatorComponents
                 RegistersManager.IncPC();
             }
 
+            void ExecuteCLR(const Common::SingleOperandInstruction& instruction)
+            {
+                SetWord(instruction.Destination, 0);
+                RegistersManager.SetFlag(RegistersManagement::Carry, 0);
+                RegistersManager.SetFlag(RegistersManagement::Overflow, 0);
+                RegistersManager.SetFlag(RegistersManagement::Sign, 0);
+                RegistersManager.SetFlag(RegistersManagement::Zero, 1);
+            }
+
             void SetWord(const word address, const word value)
             {
                 if (IsRegisterAddress(address))
@@ -359,6 +369,8 @@ namespace EmulatorComponents
                     assert(!"not implemented");
                     break;
                 }
+                assert(!"unsupported addressing type");
+                return -1; //to stfu compiler's warning
             }
         private:
             MemoryManagerPtr Memory;
