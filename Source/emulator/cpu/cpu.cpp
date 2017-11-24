@@ -291,7 +291,7 @@ namespace EmulatorComponents
 
             void ExecuteCLR(const Common::SingleOperandInstruction& instruction)
             {
-                SetWord(instruction.Destination, 0);
+                SetWord(GetSourceAddress(instruction.Destination, false), 0);
                 RegistersManager.SetFlag(RegistersManagement::Carry, 0);
                 RegistersManager.SetFlag(RegistersManagement::Overflow, 0);
                 RegistersManager.SetFlag(RegistersManagement::Sign, 0);
