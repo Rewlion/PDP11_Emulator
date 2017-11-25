@@ -173,6 +173,7 @@ namespace EmulatorComponents
                     break;
 
                 case Common::I_ASR:
+                    ExecuteASR(instruction);
                     break;
 
                 case Common::I_ASRB:
@@ -325,6 +326,23 @@ namespace EmulatorComponents
                 const byte zeroBit = result == 0 ? 1 : 0;
                 const byte msb = GetWordMSB(result);
                 const byte carryBit = result != 0 ? 1 : 0;
+                RegistersManager.SetFlag(RegistersManagement::Overflow, overflowBit);
+                RegistersManager.SetFlag(RegistersManagement::Zero, zeroBit);
+                RegistersManager.SetFlag(RegistersManagement::Sign, msb);
+                RegistersManager.SetFlag(RegistersManagement::Carry, carryBit);
+            }
+
+            void ExecuteASR(const Common::SingleOperandInstruction& instruction)
+            {
+                const word address = GetSourceAddress(instruction.Destination, false);
+                const word valueInRegister = ReadWord(address);
+                const word result = valueInRegister > 1;
+                SetWord(address, result);
+
+                const byte zeroBit = result == 0 ? 1 : 0;
+                const byte msb = GetWordMSB(result);
+                const byte carryBit = 01 & valueInRegister;
+                const byte overflowBit = 01 & (carryBit | msb);
                 RegistersManager.SetFlag(RegistersManagement::Overflow, overflowBit);
                 RegistersManager.SetFlag(RegistersManagement::Zero, zeroBit);
                 RegistersManager.SetFlag(RegistersManagement::Sign, msb);
