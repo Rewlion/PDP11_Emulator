@@ -298,6 +298,8 @@ namespace EmulatorComponents
                 RegistersManager.SetFlag(RegistersManagement::Overflow, 0);
                 RegistersManager.SetFlag(RegistersManagement::Sign, 0);
                 RegistersManager.SetFlag(RegistersManagement::Zero, 1);
+
+                RegistersManager.IncPC();
             }
 
             void ExecuteINC(const Common::SingleOperandInstruction& instruction)
@@ -313,6 +315,8 @@ namespace EmulatorComponents
                 RegistersManager.SetFlag(RegistersManagement::Overflow, overflowBit);
                 RegistersManager.SetFlag(RegistersManagement::Zero, zeroBit);
                 RegistersManager.SetFlag(RegistersManagement::Sign, msb);
+
+                RegistersManager.IncPC();
             }
 
             void ExecuteNEG(const Common::SingleOperandInstruction& instruction)
@@ -330,6 +334,8 @@ namespace EmulatorComponents
                 RegistersManager.SetFlag(RegistersManagement::Zero, zeroBit);
                 RegistersManager.SetFlag(RegistersManagement::Sign, msb);
                 RegistersManager.SetFlag(RegistersManagement::Carry, carryBit);
+
+                RegistersManager.IncPC();
             }
 
             void ExecuteASR(const Common::SingleOperandInstruction& instruction)
@@ -347,6 +353,8 @@ namespace EmulatorComponents
                 RegistersManager.SetFlag(RegistersManagement::Zero, zeroBit);
                 RegistersManager.SetFlag(RegistersManagement::Sign, msb);
                 RegistersManager.SetFlag(RegistersManagement::Carry, carryBit);
+
+                RegistersManager.IncPC();
             }
 
             void SetWord(const word address, const word value)
