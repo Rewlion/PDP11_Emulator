@@ -77,6 +77,7 @@ namespace EmulatorComponents
                     break;
 
                 case Common::I_ADD:
+                    ExecuteADD(instruction);
                     break;
 
                 case Common::I_SUB:
@@ -289,6 +290,29 @@ namespace EmulatorComponents
             {
                 const word sourceValue = ReadWord(GetSourceAddress(instruction.Source, false));
                 SetWord(GetSourceAddress(instruction.Destination, false), sourceValue);
+
+                RegistersManager.IncPC();
+            }
+
+            void ExecuteADD(const Common::DoubleOperandInstruction& instruction)
+            {
+                const word src = GetSourceAddress(instruction.Source, false);
+                const word dst = GetSourceAddress(instruction.Destination, false);
+                const word srcValue = ReadWord(src);
+                const word dstValue = ReadWord(dst);
+
+                const word result = dstValue + srcValue;
+                SetWord(dst, result);
+
+                const byte overflowBit = result < dstValue ? 1 : 0;
+                const byte carryBit = overflowBit;
+                const byte zeroBit = result == 0 ? 1 : 0;
+                const byte msb = GetWordMSB(result);
+
+                RegistersManager.SetFlag(RegistersManagement::Carry, carryBit);
+                RegistersManager.SetFlag(RegistersManagement::Overflow, overflowBit);
+                RegistersManager.SetFlag(RegistersManagement::Sign, msb);
+                RegistersManager.SetFlag(RegistersManagement::Zero, zeroBit);
 
                 RegistersManager.IncPC();
             }
