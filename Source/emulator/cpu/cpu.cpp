@@ -366,7 +366,9 @@ namespace EmulatorComponents
 
                 const byte newCarryBit = valueInRegister & 01;
                 const byte oldCarryBit = RegistersManager.GetFlag(RegistersManagement::Carry);
-                const word result = (valueInRegister > 1) | (oldCarryBit < 15);
+                const word result = (valueInRegister >> 1) | (oldCarryBit << 15);
+
+                SetWord(address, result);
 
                 const byte zeroBit = result == 0 ? 1 : 0;
                 const byte msb = GetWordMSB(result);
