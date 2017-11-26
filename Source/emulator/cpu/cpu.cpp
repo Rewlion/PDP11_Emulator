@@ -12,7 +12,12 @@ namespace EmulatorComponents
 
         inline byte GetWordMSB(const word value)
         {
-            return (1 < 15) & value;
+            return (1 << 15) & value;
+        }
+
+        inline byte GetByteMSB(const byte value)
+        {
+            return (1 << 7) & value;
         }
 
         inline bool IsRegisterAddress(const word address)
@@ -156,6 +161,7 @@ namespace EmulatorComponents
                     break;
 
                 case Common::I_INCB:
+                    ExecuteINCB(instruction);
                     break;
 
                 case Common::I_DEC:
@@ -415,6 +421,23 @@ namespace EmulatorComponents
                 const byte overflowBit = result < valueInRegister ? 1 : 0;
                 const byte zeroBit = result == 0 ? 1 : 0;
                 const byte msb = GetWordMSB(result);
+                RegistersManager.SetFlag(RegistersManagement::Overflow, overflowBit);
+                RegistersManager.SetFlag(RegistersManagement::Zero, zeroBit);
+                RegistersManager.SetFlag(RegistersManagement::Sign, msb);
+
+                RegistersManager.IncPC();
+            }
+
+            void ExecuteINCB(const Common::SingleOperandInstruction& instruction)
+            {
+                const byte valueInRegister = ReadByte(GetSourceAddress(instruction.Destination, false));
+                const byte result = valueInRegister + 1; //TODO: check if CF required in next byte
+
+                SetByte(GetSourceAddress(instruction.Destination, false), result);
+
+                const byte overflowBit = result < valueInRegister ? 1 : 0;
+                const byte zeroBit = result == 0 ? 1 : 0;
+                const byte msb = GetByteMSB(result);
                 RegistersManager.SetFlag(RegistersManagement::Overflow, overflowBit);
                 RegistersManager.SetFlag(RegistersManagement::Zero, zeroBit);
                 RegistersManager.SetFlag(RegistersManagement::Sign, msb);
