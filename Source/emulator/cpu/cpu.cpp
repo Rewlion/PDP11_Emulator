@@ -175,6 +175,7 @@ namespace EmulatorComponents
                     break;
 
                 case Common::I_NEGB:
+                    ExecuteNEGB(instruction);
                     break;
 
                 case Common::I_TST:
@@ -455,6 +456,25 @@ namespace EmulatorComponents
                 const byte overflowBit = valueInRegister == 0100000 ? 1 : 0;
                 const byte zeroBit = result == 0 ? 1 : 0;
                 const byte msb = GetWordMSB(result);
+                const byte carryBit = result != 0 ? 1 : 0;
+                RegistersManager.SetFlag(RegistersManagement::Overflow, overflowBit);
+                RegistersManager.SetFlag(RegistersManagement::Zero, zeroBit);
+                RegistersManager.SetFlag(RegistersManagement::Sign, msb);
+                RegistersManager.SetFlag(RegistersManagement::Carry, carryBit);
+
+                RegistersManager.IncPC();
+            }
+
+            void ExecuteNEGB(const Common::SingleOperandInstruction& instruction)
+            {
+                const word address = GetSourceAddress(instruction.Destination, false);
+                const byte valueInRegister = ReadByte(address);
+                const byte result = ~valueInRegister + 1;
+                SetByte(address, result);
+
+                const byte overflowBit = valueInRegister == 0100000 ? 1 : 0;
+                const byte zeroBit = result == 0 ? 1 : 0;
+                const byte msb = GetByteMSB(result);
                 const byte carryBit = result != 0 ? 1 : 0;
                 RegistersManager.SetFlag(RegistersManagement::Overflow, overflowBit);
                 RegistersManager.SetFlag(RegistersManagement::Zero, zeroBit);
