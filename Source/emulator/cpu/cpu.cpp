@@ -73,6 +73,7 @@ namespace EmulatorComponents
                     break;
 
                 case Common::I_MOVB:
+                    ExecuteMOVB(instruction);
                     break;
 
                 case Common::I_CMP:
@@ -304,6 +305,14 @@ namespace EmulatorComponents
             {
                 const word sourceValue = ReadWord(GetSourceAddress(instruction.Source, false));
                 SetWord(GetSourceAddress(instruction.Destination, false), sourceValue);
+
+                RegistersManager.IncPC();
+            }
+
+            void ExecuteMOVB(const Common::DoubleOperandInstruction& instruction)
+            {
+                const byte sourceValue = ReadByte(GetSourceAddress(instruction.Source, false));
+                SetByte(GetSourceAddress(instruction.Destination, false), sourceValue);
 
                 RegistersManager.IncPC();
             }
