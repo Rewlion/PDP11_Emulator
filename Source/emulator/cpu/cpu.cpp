@@ -344,7 +344,7 @@ namespace EmulatorComponents
             {
                 const word address = GetSourceAddress(instruction.Destination, false);
                 const word valueInRegister = ReadWord(address);
-                const word result = valueInRegister > 1;
+                const word result = valueInRegister >> 1;
                 SetWord(address, result);
 
                 const byte zeroBit = result == 0 ? 1 : 0;
