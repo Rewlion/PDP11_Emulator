@@ -101,6 +101,7 @@ namespace EmulatorComponents
                     break;
 
                 case Common::I_BICB:
+                    ExecuteBICB(instruction);
                     break;
 
                 case Common::I_BIS:
@@ -375,6 +376,26 @@ namespace EmulatorComponents
 
                 const byte zeroBit = result == 0 ? 1 : 0;
                 const byte msb = GetWordMSB(result);
+                const byte overflowBit = 0;
+                RegistersManager.SetFlag(RegistersManagement::Overflow, overflowBit);
+                RegistersManager.SetFlag(RegistersManagement::Zero, zeroBit);
+                RegistersManager.SetFlag(RegistersManagement::Sign, msb);
+
+                RegistersManager.IncPC();
+            }
+
+            void ExecuteBICB(const Common::DoubleOperandInstruction& instruction)
+            {
+                const word src = GetSourceAddress(instruction.Source, false);
+                const word dst = GetSourceAddress(instruction.Destination, false);
+                const byte srcValue = ReadByte(src);
+                const byte dstValue = ReadByte(dst);
+
+                const byte result = dstValue | (~srcValue);
+                SetByte(dst, result);
+
+                const byte zeroBit = result == 0 ? 1 : 0;
+                const byte msb = GetByteMSB(result);
                 const byte overflowBit = 0;
                 RegistersManager.SetFlag(RegistersManagement::Overflow, overflowBit);
                 RegistersManager.SetFlag(RegistersManagement::Zero, zeroBit);
