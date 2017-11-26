@@ -203,6 +203,7 @@ namespace EmulatorComponents
                     break;
 
                 case Common::I_RORB:
+                    ExecuteRORB(instruction);
                     break;
 
                 case Common::I_ROL:
@@ -536,6 +537,28 @@ namespace EmulatorComponents
 
                 const byte zeroBit = result == 0 ? 1 : 0;
                 const byte msb = GetWordMSB(result);
+                const byte overflowBit = 01 & (newCarryBit | msb);
+                RegistersManager.SetFlag(RegistersManagement::Overflow, overflowBit);
+                RegistersManager.SetFlag(RegistersManagement::Zero, zeroBit);
+                RegistersManager.SetFlag(RegistersManagement::Sign, msb);
+                RegistersManager.SetFlag(RegistersManagement::Carry, newCarryBit);
+
+                RegistersManager.IncPC();
+            }
+
+            void ExecuteRORB(const Common::SingleOperandInstruction& instruction)
+            {
+                const word address = GetSourceAddress(instruction.Destination, false);
+                const byte valueInRegister = ReadByte(address);
+
+                const byte newCarryBit = valueInRegister & 01;
+                const byte oldCarryBit = RegistersManager.GetFlag(RegistersManagement::Carry);
+                const byte result = (valueInRegister >> 1) | (oldCarryBit << 7);
+
+                SetByte(address, result);
+
+                const byte zeroBit = result == 0 ? 1 : 0;
+                const byte msb = GetByteMSB(result);
                 const byte overflowBit = 01 & (newCarryBit | msb);
                 RegistersManager.SetFlag(RegistersManagement::Overflow, overflowBit);
                 RegistersManager.SetFlag(RegistersManagement::Zero, zeroBit);
