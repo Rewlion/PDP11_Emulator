@@ -202,6 +202,7 @@ namespace EmulatorComponents
                     break;
 
                 case Common::I_ADC:
+                    ExecuteADC(instruction);
                     break;
 
                 case Common::I_ADCB:
@@ -375,6 +376,24 @@ namespace EmulatorComponents
                 RegistersManager.SetFlag(RegistersManagement::Sign, msb);
                 RegistersManager.SetFlag(RegistersManagement::Carry, newCarryBit);
 
+                RegistersManager.IncPC();
+            }
+
+            void ExecuteADC(const Common::SingleOperandInstruction& instruction)
+            {
+                const word address = GetSourceAddress(instruction.Destination, false);
+                const word valueInRegister = ReadWord(address);
+                const byte carryBit = RegistersManager.GetFlag(RegistersManagement::Carry);
+
+                const word result = valueInRegister + carryBit;
+                const byte overflowBit = result < valueInRegister ? 1 : 0;
+                const byte zeroBit = result == 0 ? 1 : 0;
+                const byte msb = GetWordMSB(result);
+                RegistersManager.SetFlag(RegistersManagement::Overflow, overflowBit);
+                RegistersManager.SetFlag(RegistersManagement::Zero, zeroBit);
+                RegistersManager.SetFlag(RegistersManagement::Sign, msb);
+
+                SetWord(address, result);
                 RegistersManager.IncPC();
             }
 
