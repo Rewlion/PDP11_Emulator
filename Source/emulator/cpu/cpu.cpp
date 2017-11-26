@@ -123,6 +123,7 @@ namespace EmulatorComponents
                     break;
 
                 case Common::I_XOR:
+                    ExecuteXOR(instruction);
                     break;
 
                 default:
@@ -351,6 +352,25 @@ namespace EmulatorComponents
 
                 const word result = dstValue | (~srcValue);
                 SetWord(dst, result);
+
+                const byte zeroBit = result == 0 ? 1 : 0;
+                const byte msb = GetWordMSB(result);
+                const byte overflowBit = 0;
+                RegistersManager.SetFlag(RegistersManagement::Overflow, overflowBit);
+                RegistersManager.SetFlag(RegistersManagement::Zero, zeroBit);
+                RegistersManager.SetFlag(RegistersManagement::Sign, msb);
+
+                RegistersManager.IncPC();
+            }
+
+            void ExecuteXOR(const Common::OneAndHalfInstruction& instruction)
+            {
+                const auto regNumber = static_cast<RegistersManagement::Register>(instruction.Register);
+                const word valueInRegister = RegistersManager.GetRegister(regNumber);
+                const word dstAddress = GetSourceAddress(instruction.Destination, false);
+
+                const word result = valueInRegister ^ dstAddress;
+                SetWord(dstAddress, result);
 
                 const byte zeroBit = result == 0 ? 1 : 0;
                 const byte msb = GetWordMSB(result);
