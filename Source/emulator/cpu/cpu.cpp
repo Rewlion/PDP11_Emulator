@@ -142,6 +142,7 @@ namespace EmulatorComponents
                     break;
 
                 case Common::I_CLRB:
+                    ExecuteCLRB(instruction);
                     break;
 
                 case Common::I_COM:
@@ -393,6 +394,17 @@ namespace EmulatorComponents
                 RegistersManager.IncPC();
             }
 
+            void ExecuteCLRB(const Common::SingleOperandInstruction& instruction)
+            {
+                SetByte(GetSourceAddress(instruction.Destination, false), 0);
+                RegistersManager.SetFlag(RegistersManagement::Carry, 0);
+                RegistersManager.SetFlag(RegistersManagement::Overflow, 0);
+                RegistersManager.SetFlag(RegistersManagement::Sign, 0);
+                RegistersManager.SetFlag(RegistersManagement::Zero, 1);
+
+                RegistersManager.IncPC();
+            }
+
             void ExecuteINC(const Common::SingleOperandInstruction& instruction)
             {
                 const word valueInRegister = ReadWord(GetSourceAddress(instruction.Destination, false));
@@ -488,12 +500,35 @@ namespace EmulatorComponents
                 RegistersManager.IncPC();
             }
 
+            void SetByte(const word address, const byte value)
+            {
+                if (IsRegisterAddress(address))
+                {
+                    const RegistersManagement::Register regNumber = ConvertRegisterAddressToRegisterNumber(address);
+                    const word valueInReguster = (RegistersManager.GetRegister(regNumber) & 0177000) | value;
+                    RegistersManager.SetRegister(regNumber, valueInReguster);
+                }
+                else
+                    Memory->setByteAt(address, value);
+            }
+
             void SetWord(const word address, const word value)
             {
                 if (IsRegisterAddress(address))
                     RegistersManager.SetRegister(ConvertRegisterAddressToRegisterNumber(address), value);
                 else
                     Memory->setWordAt(address, value);
+            }
+
+            byte ReadByte(const word address)
+            {
+                if (IsRegisterAddress(address))
+                {
+                    const byte valueInRegister = static_cast<byte>(RegistersManager.GetRegister(ConvertRegisterAddressToRegisterNumber(address)));
+                    return valueInRegister;
+                }
+
+                return Memory->getByteAt(address);
             }
 
             word ReadWord(const word address)
