@@ -53,7 +53,7 @@ namespace EmulatorComponents
         class InstructionExecutor
         {
         public:
-            InstructionExecutor(RegistersManagement::RegisterManager& registerManager, MemoryManagerPtr memoryManager)
+            InstructionExecutor(RegistersManagement::RegisterManager& registerManager, MemoryManagement::MemoryManager& memoryManager)
                 : Memory(memoryManager)
                 , RegistersManager(registerManager)
             {
@@ -644,7 +644,7 @@ namespace EmulatorComponents
                     RegistersManager.SetRegister(regNumber, valueInReguster);
                 }
                 else
-                    Memory->setByteAt(address, value);
+                    Memory.setByteAt(address, value);
             }
 
             void SetWord(const word address, const word value)
@@ -652,7 +652,7 @@ namespace EmulatorComponents
                 if (IsRegisterAddress(address))
                     RegistersManager.SetRegister(ConvertRegisterAddressToRegisterNumber(address), value);
                 else
-                    Memory->setWordAt(address, value);
+                    Memory.setWordAt(address, value);
             }
 
             byte ReadByte(const word address)
@@ -663,7 +663,7 @@ namespace EmulatorComponents
                     return valueInRegister;
                 }
 
-                return Memory->getByteAt(address);
+                return Memory.getByteAt(address);
             }
 
             word ReadWord(const word address)
@@ -674,7 +674,7 @@ namespace EmulatorComponents
                     return valueInRegister;
                 }
 
-                return Memory->getWordAt(address);
+                return Memory.getWordAt(address);
             }
 
             // Get a source's address accounting an addressing mode.
@@ -740,20 +740,19 @@ namespace EmulatorComponents
                 return -1; //to stfu compiler's warning
             }
         private:
-            MemoryManagerPtr Memory;
+            MemoryManagement::MemoryManager Memory;
             RegistersManagement::RegisterManager& RegistersManager;
         };
     }
 
-    Cpu::Cpu(MemoryManagerPtr memory)
-        : Memory(memory)
-        , IsExecutionOver(true)
+    Cpu::Cpu()
+        : IsExecutionOver(true)
     {
     }
 
     void Cpu::Run()
     {
-        const word firstInstruction = Memory->getFirstInstruction();
+        const word firstInstruction = Memory.getFirstInstruction();
         RegistersManager.SetPC(firstInstruction);
 
         while(!IsExecutionOver)

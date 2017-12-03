@@ -9,19 +9,17 @@
 #include <string>
 #include <memory>
 
-typedef std::shared_ptr<EmulatorComponents::MemoryManagement::MemoryManager> MemoryManagerPtr;
-
 namespace EmulatorComponents
 {
     class Cpu
     {
     public:
-        explicit Cpu(MemoryManagerPtr memory);
+        Cpu();
         void Run();
     private:
         void Execute(const Common::Instruction& instruction);
     private:
-        MemoryManagerPtr Memory;
+        MemoryManagement::MemoryManager Memory;
         Decoding::Decoder Decoder;
         RegistersManagement::RegisterManager RegistersManager;
 
