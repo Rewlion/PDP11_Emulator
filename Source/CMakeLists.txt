@@ -4,6 +4,13 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+set (CMAKE_PREFIX_PATH "kiko")
+if (${CMAKE_PREFIX_PATH} STREQUAL "kiko")
+  message(FATAL_ERROR "please specify the path to the folder with QT libs")
+endif()
+
+find_package(Qt5 COMPONENTS Core Quick Widgets REQUIRED)
+
 set(PROJECT emulator)
 project (${PROJECT})
 
@@ -31,3 +38,4 @@ source_group(emulator\\cpu FILES ${CPU_SOURCE_LIST})
 source_group(emulator\\memory FILES ${MEMORY_SOURCE_LIST})
 
 add_library(${PROJECT} ${EMULATOR_SOURCE_LIST} ${COMMON_SOURCE_LIST} ${CPU_SOURCE_LIST} ${MEMORY_SOURCE_LIST} )
+target_link_libraries(${PROJECT} Qt5::Core Qt5::Quick Qt5::Widgets)
