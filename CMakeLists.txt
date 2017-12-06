@@ -7,6 +7,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 project (Main)
 
 include_directories(Source)
+include_directories(Source/thirdparty/Qt) #dirty hack for includes in Qt lib.
 
 add_subdirectory(Source)
 add_subdirectory(Test)

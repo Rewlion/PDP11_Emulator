@@ -2,6 +2,9 @@
 
 #include <emulator/common/error.h>
 
+#include <thirdparty/Qt/QtCore/qdebug.h>
+#include <thirdparty/Qt/QtCore/qthread.h>
+
 #include <assert.h>
 #include <fstream>
 
@@ -750,17 +753,45 @@ namespace EmulatorComponents
     {
     }
 
+    void  Cpu::Step()
+    {
+        qDebug() << QString("Step");
+
+        const word rawInstruction = Memory.getWordAt(RegistersManager.GetPC());
+        const Common::Instruction instruction = Decoder.Decode(rawInstruction);
+        Execute(instruction);
+
+        emit RegistersContextUpdated(RegistersManager);
+    }
+    void  Cpu::Stop()
+    {
+        qDebug() << "Thread:" << QThread::currentThreadId() << " " << "Stop";
+        IsExecutionOver = true;
+    }
+    void Cpu::SetPC(const word startAddress)
+    {
+        qDebug() << "Cpu is setting new PC:" << startAddress;
+        RegistersManager.SetPC(startAddress);
+
+        emit RegistersContextUpdated(RegistersManager);
+    }
+
+    void  Cpu::LoadProgram(const QString& fileLocation)
+    {
+        qDebug() << QString("Cpu is going to load new program from file: `%2`").arg(fileLocation);
+        Memory.loadProgram(fileLocation.toStdString());
+
+        emit RegistersContextUpdated(RegistersManager);
+        emit ProgramLoaded(Memory.getProgramBegin(), Memory.getLoadedProgramSize());
+    }
+
     void Cpu::Run()
     {
-        const word firstInstruction = Memory.getFirstInstruction();
-        RegistersManager.SetPC(firstInstruction);
+        qDebug() << QString("Run");
+        while (!IsExecutionOver)
+            Step();
 
-        while(!IsExecutionOver)
-        {
-            const word rawInstruction = RegistersManager.GetPC();
-            const Common::Instruction instruction = Decoder.Decode(rawInstruction);
-            Execute(instruction);
-        }
+        emit RegistersContextUpdated(RegistersManager);
     }
 
     void Cpu::Execute(const Common::Instruction& instruction)

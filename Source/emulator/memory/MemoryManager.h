@@ -36,6 +36,11 @@ namespace EmulatorComponents::MemoryManagement {
             return programSize;
         }
 
+        inline byte* getProgramBegin() const
+        {
+            return memory_ + getROMBegining();
+        }
+
         inline word getFirstInstruction() const
         {
             return getWordAt(getROMBegining());
