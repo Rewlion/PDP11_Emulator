@@ -2,6 +2,9 @@
 
 #include <emulator/common/error.h>
 
+#include <thirdparty/Qt/QtCore/qdebug.h>
+#include <thirdparty/Qt/QtCore/qthread.h>
+
 #include <assert.h>
 #include <fstream>
 
@@ -9,6 +12,17 @@ namespace EmulatorComponents
 {
     namespace
     {
+
+        inline byte GetWordMSB(const word value)
+        {
+            return (1 << 15) & value;
+        }
+
+        inline byte GetByteMSB(const byte value)
+        {
+            return (1 << 7) & value;
+        }
+
         inline bool IsRegisterAddress(const word address)
         {
             if ((address & 0170007) != 0)
@@ -42,7 +56,7 @@ namespace EmulatorComponents
         class InstructionExecutor
         {
         public:
-            InstructionExecutor(RegistersManagement::RegisterManager& registerManager, MemoryManagerPtr memoryManager)
+            InstructionExecutor(RegistersManagement::RegisterManager& registerManager, MemoryManagement::MemoryManager& memoryManager)
                 : Memory(memoryManager)
                 , RegistersManager(registerManager)
             {
@@ -62,6 +76,7 @@ namespace EmulatorComponents
                     break;
 
                 case Common::I_MOVB:
+                    ExecuteMOVB(instruction);
                     break;
 
                 case Common::I_CMP:
@@ -71,9 +86,11 @@ namespace EmulatorComponents
                     break;
 
                 case Common::I_ADD:
+                    ExecuteADD(instruction);
                     break;
 
                 case Common::I_SUB:
+                    ExecuteSUB(instruction);
                     break;
 
                 case Common::I_BIT:
@@ -83,9 +100,11 @@ namespace EmulatorComponents
                     break;
 
                 case Common::I_BIC:
+                    ExecuteBIC(instruction);
                     break;
 
                 case Common::I_BICB:
+                    ExecuteBICB(instruction);
                     break;
 
                 case Common::I_BIS:
@@ -114,6 +133,7 @@ namespace EmulatorComponents
                     break;
 
                 case Common::I_XOR:
+                    ExecuteXOR(instruction);
                     break;
 
                 default:
@@ -128,9 +148,11 @@ namespace EmulatorComponents
                 switch (instruction.Meta.Type)
                 {
                 case Common::I_CLR:
+                    ExecuteCLR(instruction);
                     break;
 
                 case Common::I_CLRB:
+                    ExecuteCLRB(instruction);
                     break;
 
                 case Common::I_COM:
@@ -140,9 +162,11 @@ namespace EmulatorComponents
                     break;
 
                 case Common::I_INC:
+                    ExecuteINC(instruction);
                     break;
 
                 case Common::I_INCB:
+                    ExecuteINCB(instruction);
                     break;
 
                 case Common::I_DEC:
@@ -152,9 +176,11 @@ namespace EmulatorComponents
                     break;
 
                 case Common::I_NEG:
+                    ExecuteNEG(instruction);
                     break;
 
                 case Common::I_NEGB:
+                    ExecuteNEGB(instruction);
                     break;
 
                 case Common::I_TST:
@@ -164,9 +190,11 @@ namespace EmulatorComponents
                     break;
 
                 case Common::I_ASR:
+                    ExecuteASR(instruction);
                     break;
 
                 case Common::I_ASRB:
+                    ExecuteASRB(instruction);
                     break;
 
                 case Common::I_ASL:
@@ -176,9 +204,11 @@ namespace EmulatorComponents
                     break;
 
                 case Common::I_ROR:
+                    ExecuteROR(instruction);
                     break;
 
                 case Common::I_RORB:
+                    ExecuteRORB(instruction);
                     break;
 
                 case Common::I_ROL:
@@ -191,9 +221,11 @@ namespace EmulatorComponents
                     break;
 
                 case Common::I_ADC:
+                    ExecuteADC(instruction);
                     break;
 
                 case Common::I_ADCB:
+                    ExecuteADCB(instruction);
                     break;
 
                 case Common::I_SBC:
@@ -281,12 +313,360 @@ namespace EmulatorComponents
                 RegistersManager.IncPC();
             }
 
+            void ExecuteMOVB(const Common::DoubleOperandInstruction& instruction)
+            {
+                const byte sourceValue = ReadByte(GetSourceAddress(instruction.Source, false));
+                SetByte(GetSourceAddress(instruction.Destination, false), sourceValue);
+
+                RegistersManager.IncPC();
+            }
+
+            void ExecuteADD(const Common::DoubleOperandInstruction& instruction)
+            {
+                const word src = GetSourceAddress(instruction.Source, false);
+                const word dst = GetSourceAddress(instruction.Destination, false);
+                const word srcValue = ReadWord(src);
+                const word dstValue = ReadWord(dst);
+
+                const word result = dstValue + srcValue;
+                SetWord(dst, result);
+
+                const byte overflowBit = result < dstValue ? 1 : 0;
+                const byte carryBit = overflowBit;
+                const byte zeroBit = result == 0 ? 1 : 0;
+                const byte msb = GetWordMSB(result);
+
+                RegistersManager.SetFlag(RegistersManagement::Carry, carryBit);
+                RegistersManager.SetFlag(RegistersManagement::Overflow, overflowBit);
+                RegistersManager.SetFlag(RegistersManagement::Sign, msb);
+                RegistersManager.SetFlag(RegistersManagement::Zero, zeroBit);
+
+                RegistersManager.IncPC();
+            }
+
+            void ExecuteSUB(const Common::DoubleOperandInstruction& instruction)
+            {
+                const word src = GetSourceAddress(instruction.Source, false);
+                const word dst = GetSourceAddress(instruction.Destination, false);
+                const word srcValue = ReadWord(src);
+                const word dstValue = ReadWord(dst);
+
+                const word result = dstValue - srcValue;
+                SetWord(dst, result);
+
+                const byte overflowBit = result < dstValue ? 1 : 0;
+                const byte carryBit = srcValue > dstValue ? 1 : 0;
+                const byte zeroBit = result == 0 ? 1 : 0;
+                const byte msb = GetWordMSB(result);
+
+                RegistersManager.SetFlag(RegistersManagement::Carry, carryBit);
+                RegistersManager.SetFlag(RegistersManagement::Overflow, overflowBit);
+                RegistersManager.SetFlag(RegistersManagement::Sign, msb);
+                RegistersManager.SetFlag(RegistersManagement::Zero, zeroBit);
+
+                RegistersManager.IncPC();
+            }
+
+            void ExecuteBIC(const Common::DoubleOperandInstruction& instruction)
+            {
+                const word src = GetSourceAddress(instruction.Source, false);
+                const word dst = GetSourceAddress(instruction.Destination, false);
+                const word srcValue = ReadWord(src);
+                const word dstValue = ReadWord(dst);
+
+                const word result = dstValue | (~srcValue);
+                SetWord(dst, result);
+
+                const byte zeroBit = result == 0 ? 1 : 0;
+                const byte msb = GetWordMSB(result);
+                const byte overflowBit = 0;
+                RegistersManager.SetFlag(RegistersManagement::Overflow, overflowBit);
+                RegistersManager.SetFlag(RegistersManagement::Zero, zeroBit);
+                RegistersManager.SetFlag(RegistersManagement::Sign, msb);
+
+                RegistersManager.IncPC();
+            }
+
+            void ExecuteBICB(const Common::DoubleOperandInstruction& instruction)
+            {
+                const word src = GetSourceAddress(instruction.Source, false);
+                const word dst = GetSourceAddress(instruction.Destination, false);
+                const byte srcValue = ReadByte(src);
+                const byte dstValue = ReadByte(dst);
+
+                const byte result = dstValue | (~srcValue);
+                SetByte(dst, result);
+
+                const byte zeroBit = result == 0 ? 1 : 0;
+                const byte msb = GetByteMSB(result);
+                const byte overflowBit = 0;
+                RegistersManager.SetFlag(RegistersManagement::Overflow, overflowBit);
+                RegistersManager.SetFlag(RegistersManagement::Zero, zeroBit);
+                RegistersManager.SetFlag(RegistersManagement::Sign, msb);
+
+                RegistersManager.IncPC();
+            }
+
+            void ExecuteXOR(const Common::OneAndHalfInstruction& instruction)
+            {
+                const auto regNumber = static_cast<RegistersManagement::Register>(instruction.Register);
+                const word valueInRegister = RegistersManager.GetRegister(regNumber);
+                const word dstAddress = GetSourceAddress(instruction.Destination, false);
+
+                const word result = valueInRegister ^ dstAddress;
+                SetWord(dstAddress, result);
+
+                const byte zeroBit = result == 0 ? 1 : 0;
+                const byte msb = GetWordMSB(result);
+                const byte overflowBit = 0;
+                RegistersManager.SetFlag(RegistersManagement::Overflow, overflowBit);
+                RegistersManager.SetFlag(RegistersManagement::Zero, zeroBit);
+                RegistersManager.SetFlag(RegistersManagement::Sign, msb);
+
+                RegistersManager.IncPC();
+            }
+
+            void ExecuteCLR(const Common::SingleOperandInstruction& instruction)
+            {
+                SetWord(GetSourceAddress(instruction.Destination, false), 0);
+                RegistersManager.SetFlag(RegistersManagement::Carry, 0);
+                RegistersManager.SetFlag(RegistersManagement::Overflow, 0);
+                RegistersManager.SetFlag(RegistersManagement::Sign, 0);
+                RegistersManager.SetFlag(RegistersManagement::Zero, 1);
+
+                RegistersManager.IncPC();
+            }
+
+            void ExecuteCLRB(const Common::SingleOperandInstruction& instruction)
+            {
+                SetByte(GetSourceAddress(instruction.Destination, false), 0);
+                RegistersManager.SetFlag(RegistersManagement::Carry, 0);
+                RegistersManager.SetFlag(RegistersManagement::Overflow, 0);
+                RegistersManager.SetFlag(RegistersManagement::Sign, 0);
+                RegistersManager.SetFlag(RegistersManagement::Zero, 1);
+
+                RegistersManager.IncPC();
+            }
+
+            void ExecuteINC(const Common::SingleOperandInstruction& instruction)
+            {
+                const word valueInRegister = ReadWord(GetSourceAddress(instruction.Destination, false));
+                const word result = valueInRegister + 1;
+
+                SetWord(GetSourceAddress(instruction.Destination, false), result);
+
+                const byte overflowBit = result < valueInRegister ? 1 : 0;
+                const byte zeroBit = result == 0 ? 1 : 0;
+                const byte msb = GetWordMSB(result);
+                RegistersManager.SetFlag(RegistersManagement::Overflow, overflowBit);
+                RegistersManager.SetFlag(RegistersManagement::Zero, zeroBit);
+                RegistersManager.SetFlag(RegistersManagement::Sign, msb);
+
+                RegistersManager.IncPC();
+            }
+
+            void ExecuteINCB(const Common::SingleOperandInstruction& instruction)
+            {
+                const byte valueInRegister = ReadByte(GetSourceAddress(instruction.Destination, false));
+                const byte result = valueInRegister + 1; //TODO: check if CF required in next byte
+
+                SetByte(GetSourceAddress(instruction.Destination, false), result);
+
+                const byte overflowBit = result < valueInRegister ? 1 : 0;
+                const byte zeroBit = result == 0 ? 1 : 0;
+                const byte msb = GetByteMSB(result);
+                RegistersManager.SetFlag(RegistersManagement::Overflow, overflowBit);
+                RegistersManager.SetFlag(RegistersManagement::Zero, zeroBit);
+                RegistersManager.SetFlag(RegistersManagement::Sign, msb);
+
+                RegistersManager.IncPC();
+            }
+
+            void ExecuteNEG(const Common::SingleOperandInstruction& instruction)
+            {
+                const word address = GetSourceAddress(instruction.Destination, false);
+                const word valueInRegister = ReadWord(address);
+                const word result = ~valueInRegister + 1;
+                SetWord(address, result);
+
+                const byte overflowBit = valueInRegister == 0100000 ? 1 : 0;
+                const byte zeroBit = result == 0 ? 1 : 0;
+                const byte msb = GetWordMSB(result);
+                const byte carryBit = result != 0 ? 1 : 0;
+                RegistersManager.SetFlag(RegistersManagement::Overflow, overflowBit);
+                RegistersManager.SetFlag(RegistersManagement::Zero, zeroBit);
+                RegistersManager.SetFlag(RegistersManagement::Sign, msb);
+                RegistersManager.SetFlag(RegistersManagement::Carry, carryBit);
+
+                RegistersManager.IncPC();
+            }
+
+            void ExecuteNEGB(const Common::SingleOperandInstruction& instruction)
+            {
+                const word address = GetSourceAddress(instruction.Destination, false);
+                const byte valueInRegister = ReadByte(address);
+                const byte result = ~valueInRegister + 1;
+                SetByte(address, result);
+
+                const byte overflowBit = valueInRegister == 0100000 ? 1 : 0;
+                const byte zeroBit = result == 0 ? 1 : 0;
+                const byte msb = GetByteMSB(result);
+                const byte carryBit = result != 0 ? 1 : 0;
+                RegistersManager.SetFlag(RegistersManagement::Overflow, overflowBit);
+                RegistersManager.SetFlag(RegistersManagement::Zero, zeroBit);
+                RegistersManager.SetFlag(RegistersManagement::Sign, msb);
+                RegistersManager.SetFlag(RegistersManagement::Carry, carryBit);
+
+                RegistersManager.IncPC();
+            }
+
+            void ExecuteASR(const Common::SingleOperandInstruction& instruction)
+            {
+                const word address = GetSourceAddress(instruction.Destination, false);
+                const word valueInRegister = ReadWord(address);
+                const word result = valueInRegister >> 1;
+                SetWord(address, result);
+
+                const byte zeroBit = result == 0 ? 1 : 0;
+                const byte msb = GetWordMSB(result);
+                const byte carryBit = 01 & valueInRegister;
+                const byte overflowBit = 01 & (carryBit | msb);
+                RegistersManager.SetFlag(RegistersManagement::Overflow, overflowBit);
+                RegistersManager.SetFlag(RegistersManagement::Zero, zeroBit);
+                RegistersManager.SetFlag(RegistersManagement::Sign, msb);
+                RegistersManager.SetFlag(RegistersManagement::Carry, carryBit);
+
+                RegistersManager.IncPC();
+            }
+
+            void ExecuteASRB(const Common::SingleOperandInstruction& instruction)
+            {
+                const word address = GetSourceAddress(instruction.Destination, false);
+                const byte valueInRegister = ReadByte(address);
+                const byte result = valueInRegister >> 1;
+                SetByte(address, result);
+
+                const byte zeroBit = result == 0 ? 1 : 0;
+                const byte msb = GetByteMSB(result);
+                const byte carryBit = 01 & valueInRegister;
+                const byte overflowBit = 01 & (carryBit | msb);
+                RegistersManager.SetFlag(RegistersManagement::Overflow, overflowBit);
+                RegistersManager.SetFlag(RegistersManagement::Zero, zeroBit);
+                RegistersManager.SetFlag(RegistersManagement::Sign, msb);
+                RegistersManager.SetFlag(RegistersManagement::Carry, carryBit);
+
+                RegistersManager.IncPC();
+            }
+
+            void ExecuteROR(const Common::SingleOperandInstruction& instruction)
+            {
+                const word address = GetSourceAddress(instruction.Destination, false);
+                const word valueInRegister = ReadWord(address);
+
+                const byte newCarryBit = valueInRegister & 01;
+                const byte oldCarryBit = RegistersManager.GetFlag(RegistersManagement::Carry);
+                const word result = (valueInRegister >> 1) | (oldCarryBit << 15);
+
+                SetWord(address, result);
+
+                const byte zeroBit = result == 0 ? 1 : 0;
+                const byte msb = GetWordMSB(result);
+                const byte overflowBit = 01 & (newCarryBit | msb);
+                RegistersManager.SetFlag(RegistersManagement::Overflow, overflowBit);
+                RegistersManager.SetFlag(RegistersManagement::Zero, zeroBit);
+                RegistersManager.SetFlag(RegistersManagement::Sign, msb);
+                RegistersManager.SetFlag(RegistersManagement::Carry, newCarryBit);
+
+                RegistersManager.IncPC();
+            }
+
+            void ExecuteRORB(const Common::SingleOperandInstruction& instruction)
+            {
+                const word address = GetSourceAddress(instruction.Destination, false);
+                const byte valueInRegister = ReadByte(address);
+
+                const byte newCarryBit = valueInRegister & 01;
+                const byte oldCarryBit = RegistersManager.GetFlag(RegistersManagement::Carry);
+                const byte result = (valueInRegister >> 1) | (oldCarryBit << 7);
+
+                SetByte(address, result);
+
+                const byte zeroBit = result == 0 ? 1 : 0;
+                const byte msb = GetByteMSB(result);
+                const byte overflowBit = 01 & (newCarryBit | msb);
+                RegistersManager.SetFlag(RegistersManagement::Overflow, overflowBit);
+                RegistersManager.SetFlag(RegistersManagement::Zero, zeroBit);
+                RegistersManager.SetFlag(RegistersManagement::Sign, msb);
+                RegistersManager.SetFlag(RegistersManagement::Carry, newCarryBit);
+
+                RegistersManager.IncPC();
+            }
+
+            void ExecuteADC(const Common::SingleOperandInstruction& instruction)
+            {
+                const word address = GetSourceAddress(instruction.Destination, false);
+                const word valueInRegister = ReadWord(address);
+                const byte carryBit = RegistersManager.GetFlag(RegistersManagement::Carry);
+
+                const word result = valueInRegister + carryBit;
+                const byte overflowBit = result < valueInRegister ? 1 : 0;
+                const byte zeroBit = result == 0 ? 1 : 0;
+                const byte msb = GetWordMSB(result);
+                RegistersManager.SetFlag(RegistersManagement::Overflow, overflowBit);
+                RegistersManager.SetFlag(RegistersManagement::Zero, zeroBit);
+                RegistersManager.SetFlag(RegistersManagement::Sign, msb);
+
+                SetWord(address, result);
+                RegistersManager.IncPC();
+            }
+
+            void ExecuteADCB(const Common::SingleOperandInstruction& instruction)
+            {
+                const word address = GetSourceAddress(instruction.Destination, false);
+                const byte valueInRegister = ReadByte(address);
+                const byte carryBit = RegistersManager.GetFlag(RegistersManagement::Carry);
+
+                const byte result = valueInRegister + carryBit;
+                const byte overflowBit = result < valueInRegister ? 1 : 0;
+                const byte zeroBit = result == 0 ? 1 : 0;
+                const byte msb = GetByteMSB(result);
+                RegistersManager.SetFlag(RegistersManagement::Overflow, overflowBit);
+                RegistersManager.SetFlag(RegistersManagement::Zero, zeroBit);
+                RegistersManager.SetFlag(RegistersManagement::Sign, msb);
+
+                SetByte(address, result);
+                RegistersManager.IncPC();
+            }
+
+            void SetByte(const word address, const byte value)
+            {
+                if (IsRegisterAddress(address))
+                {
+                    const RegistersManagement::Register regNumber = ConvertRegisterAddressToRegisterNumber(address);
+                    const word valueInReguster = (RegistersManager.GetRegister(regNumber) & 0177000) | value;
+                    RegistersManager.SetRegister(regNumber, valueInReguster);
+                }
+                else
+                    Memory.setByteAt(address, value);
+            }
+
             void SetWord(const word address, const word value)
             {
                 if (IsRegisterAddress(address))
                     RegistersManager.SetRegister(ConvertRegisterAddressToRegisterNumber(address), value);
                 else
-                    Memory->setWordAt(address, value);
+                    Memory.setWordAt(address, value);
+            }
+
+            byte ReadByte(const word address)
+            {
+                if (IsRegisterAddress(address))
+                {
+                    const byte valueInRegister = static_cast<byte>(RegistersManager.GetRegister(ConvertRegisterAddressToRegisterNumber(address)));
+                    return valueInRegister;
+                }
+
+                return Memory.getByteAt(address);
             }
 
             word ReadWord(const word address)
@@ -297,7 +677,7 @@ namespace EmulatorComponents
                     return valueInRegister;
                 }
 
-                return Memory->getWordAt(address);
+                return Memory.getWordAt(address);
             }
 
             // Get a source's address accounting an addressing mode.
@@ -359,30 +739,59 @@ namespace EmulatorComponents
                     assert(!"not implemented");
                     break;
                 }
+                assert(!"unsupported addressing type");
+                return -1; //to stfu compiler's warning
             }
         private:
-            MemoryManagerPtr Memory;
+            MemoryManagement::MemoryManager Memory;
             RegistersManagement::RegisterManager& RegistersManager;
         };
     }
 
-    Cpu::Cpu(MemoryManagerPtr memory)
-        : Memory(memory)
-        , IsExecutionOver(true)
+    Cpu::Cpu()
+        : IsExecutionOver(true)
     {
+    }
+
+    void  Cpu::Step()
+    {
+        qDebug() << QString("Step");
+
+        const word rawInstruction = Memory.getWordAt(RegistersManager.GetPC());
+        const Common::Instruction instruction = Decoder.Decode(rawInstruction);
+        Execute(instruction);
+
+        emit RegistersContextUpdated(RegistersManager);
+    }
+    void  Cpu::Stop()
+    {
+        qDebug() << "Thread:" << QThread::currentThreadId() << " " << "Stop";
+        IsExecutionOver = true;
+    }
+    void Cpu::SetPC(const word startAddress)
+    {
+        qDebug() << "Cpu is setting new PC:" << startAddress;
+        RegistersManager.SetPC(startAddress);
+
+        emit RegistersContextUpdated(RegistersManager);
+    }
+
+    void  Cpu::LoadProgram(const QString& fileLocation)
+    {
+        qDebug() << QString("Cpu is going to load new program from file: `%2`").arg(fileLocation);
+        Memory.loadProgram(fileLocation.toStdString());
+
+        emit RegistersContextUpdated(RegistersManager);
+        emit ProgramLoaded(Memory.getProgramBegin(), Memory.getLoadedProgramSize());
     }
 
     void Cpu::Run()
     {
-        const word firstInstruction = Memory->getFirstInstruction();
-        RegistersManager.SetPC(firstInstruction);
+        qDebug() << QString("Run");
+        while (!IsExecutionOver)
+            Step();
 
-        while(!IsExecutionOver)
-        {
-            const word rawInstruction = RegistersManager.GetPC();
-            const Common::Instruction instruction = Decoder.Decode(rawInstruction);
-            Execute(instruction);
-        }
+        emit RegistersContextUpdated(RegistersManager);
     }
 
     void Cpu::Execute(const Common::Instruction& instruction)

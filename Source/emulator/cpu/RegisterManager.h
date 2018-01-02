@@ -11,7 +11,6 @@ namespace EmulatorComponents::RegistersManagement
     {
         inline void SetBit(byte& value, byte position, byte bit)
         {
-            assert(position <= 1);
             value ^= (-bit ^ value) & (1 << position);
         }
 
@@ -28,7 +27,6 @@ namespace EmulatorComponents::RegistersManagement
 
         inline byte GetBit(byte from, byte position)
         {
-            assert(position <= 1);
             return (from >> position) & 1;
         }
     }
@@ -41,7 +39,7 @@ namespace EmulatorComponents::RegistersManagement
         R4,
         R5,
         R6,
-        R7
+        R7,
     };
 
     enum Flag
@@ -54,15 +52,12 @@ namespace EmulatorComponents::RegistersManagement
         InterruptPriority
     };
 
-    constexpr int GetRegistersNumber()
-    {
-        return 7;
-    }
-
     class RegisterManager
     {
     public:
-        
+        static const byte RegistersNumber = 7;
+        static const byte FlagsNumber = 5;
+
         inline void IncPC()
         {
             Registers[R7] = Registers[R7] + sizeof(word);
@@ -104,8 +99,13 @@ namespace EmulatorComponents::RegistersManagement
                 return GetInterruptFlag(FlagRegister);
         }
 
+        inline byte GetFlagRegister() const
+        {
+            return FlagRegister;
+        }
+
     private:
-        std::array<dword, GetRegistersNumber()> Registers;
+        std::array<dword, RegisterManager::RegistersNumber> Registers;
         byte FlagRegister;
     };
 }

@@ -6,25 +6,40 @@
 #include <emulator/cpu/RegisterManager.h>
 #include <emulator/memory/MemoryManager.h>
 
+#include <thirdparty/Qt/QtCore/qobject.h>
+
+#include <atomic>
 #include <string>
 #include <memory>
 
-typedef std::shared_ptr<EmulatorComponents::MemoryManagement::MemoryManager> MemoryManagerPtr;
-
 namespace EmulatorComponents
 {
-    class Cpu
+    struct Context
     {
-    public:
-        explicit Cpu(MemoryManagerPtr memory);
+        RegistersManagement::RegisterManager registers;
+    };
+
+    class Cpu : public QObject
+    {
+       Q_OBJECT
+    public slots:
+        void Step();
         void Run();
+        void Stop();
+        void SetPC(const word startAddress);
+        void LoadProgram(const QString& fileLocation);
+    signals:
+        void RegistersContextUpdated(EmulatorComponents::RegistersManagement::RegisterManager context);
+        void ProgramLoaded(byte* memory, size_t size);
+    public:
+        Cpu();
     private:
         void Execute(const Common::Instruction& instruction);
     private:
-        MemoryManagerPtr Memory;
+        MemoryManagement::MemoryManager Memory;
         Decoding::Decoder Decoder;
         RegistersManagement::RegisterManager RegistersManager;
 
-        bool IsExecutionOver;
+        std::atomic_bool IsExecutionOver;
     };
 }
