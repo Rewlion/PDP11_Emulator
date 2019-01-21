@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Memory">
+      <UniqueIdentifier>{23a43b28-1999-4254-81be-af864b24521b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{0f1fbaf9-4e2e-43e3-b4b5-74fee84ca84d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Exceptions">
+      <UniqueIdentifier>{3377a208-cb4b-40f7-8d5e-5ff70ee17e0e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HW">
+      <UniqueIdentifier>{31f5fbe0-1d2e-42f2-9bf1-7358563e8e3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HW\CPU">
+      <UniqueIdentifier>{28ccffa4-9c8c-463e-bc08-46a025248322}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Emulator.cpp" />
+    <ClCompile Include="Memory\Unibus.cpp">
+      <Filter>Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\Exceptions\Error.cpp">
+      <Filter>Common\Exceptions</Filter>
+    </ClCompile>
+    <ClCompile Include="Memory\DirectMemoryRegion.cpp">
+      <Filter>Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="Memory\MemoryRegion.cpp">
+      <Filter>Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="HW\CPU\CPU.cpp">
+      <Filter>HW\CPU</Filter>
+    </ClCompile>
+    <ClCompile Include="HW\CPU\Decoder.cpp">
+      <Filter>HW\CPU</Filter>
+    </ClCompile>
+    <ClCompile Include="HW\CPU\Executer.cpp">
+      <Filter>HW\CPU</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Emulator.h" />
+    <ClInclude Include="Memory\MemoryRegion.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Types.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory\Unibus.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Exceptions\Error.h">
+      <Filter>Common\Exceptions</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory\DirectMemoryRegion.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="HW\CPU\CPU.h">
+      <Filter>HW\CPU</Filter>
+    </ClInclude>
+    <ClInclude Include="HW\CPU\Decoder.h">
+      <Filter>HW\CPU</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Instruction.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory\MemoryRegionInformation.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="HW\CPU\FlagRegister.h">
+      <Filter>HW\CPU</Filter>
+    </ClInclude>
+    <ClInclude Include="HW\CPU\Executer.h">
+      <Filter>HW\CPU</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory\RawRegion.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
