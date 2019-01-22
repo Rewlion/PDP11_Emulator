@@ -34,7 +34,7 @@ MemoryRegion* Unibus::GetMemoryRegion(const Address address)
     {
         const DWord regionBegin = region->GetAddressBegin();
         const DWord regionEnd = regionBegin + region->GetSize();
-        std::printf("begin:%d  end:%d\n", regionBegin, regionEnd);
+        
         if ((address >= regionBegin) && (address < regionEnd))
             return region;
     }

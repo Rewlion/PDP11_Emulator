@@ -3,7 +3,7 @@
 
 int main()
 {
-    PDP11::Emulator emulator;
+    Emulator emulator;
     emulator.UploadProgramToROMFromFile("C:/GitProjects/PDP11_Emulator/PDP11/TestPrograms/pr.m11");
     emulator.Run();
 }

@@ -8,36 +8,33 @@
 #include <vector>
 #include <string>
 
-namespace PDP11
+class Emulator
 {
-    class Emulator
-    {
-    public:
-        Emulator();
+public:
+    Emulator();
 
-        void                 UploadProgramToROMFromFile(const std::string& path);
-        void                 Step();
-        void                 Run();
-        void                 Stop();
-        RegistersInformation GetRegisters() const;
-        RawRegion            CopyROM() const;
+    void                 UploadProgramToROMFromFile(const std::string& path);
+    void                 Step();
+    void                 Run();
+    void                 Stop();
+    RegistersInformation GetRegisters() const;
+    RawRegion            CopyROM() const;
 
-    private:
-        void InitializeUnibus();
+private:
+    void InitializeUnibus();
 
-        std::vector<Word> ReadProgram(const std::string& path) const;
-        void              UploadProgramToROM(std::vector<Word>&& program);
+    std::vector<Word> ReadProgram(const std::string& path) const;
+    void              UploadProgramToROM(std::vector<Word>&& program);
 
-    private:
-        Unibus        Bus;
-        CPU           CPU;
+private:
+    Unibus        Bus;
+    CPU           CPU;
 
-        bool          IsAbleToRun;
+	bool          IsAbleToRun;
 
-        MemoryRegion* RAM;
-        MemoryRegion* VRAM;
-        MemoryRegion* ROM;
-        MemoryRegion* IO;
-        MemoryRegion* Registers;
-    };
-}
+	MemoryRegion* RAM;
+	MemoryRegion* VRAM;
+	MemoryRegion* ROM;
+	MemoryRegion* IO;
+	MemoryRegion* Registers;
+};

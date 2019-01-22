@@ -3,46 +3,43 @@
 #include "../../Memory/Unibus.h"
 #include "../../Memory/MemoryRegionInformation.h"
 
-namespace PDP11
+CPU::CPU(Unibus* bus)
+    : Bus(bus)
+    , Executer(FlagRegister, Bus)
 {
-    CPU::CPU(Unibus* bus)
-        : Bus(bus)
-        , Executer(FlagRegister, Bus)
-    {
-    }
+}
 
-    void CPU::Step()
-    {
-        const Address     instructionAddress = Bus->Read(GetPCAddress());
-        IncPC();
-        const Word        rawInstruction = Bus->Read(instructionAddress);
-        const Instruction decodedInstruction = Decoder.Decode(rawInstruction);
+void CPU::Step()
+{
+    const Address     instructionAddress = Bus->Read(GetPCAddress());
+    IncPC();
+    const Word        rawInstruction = Bus->Read(instructionAddress);
+    const Instruction decodedInstruction = Decoder.Decode(rawInstruction);
 
-        try
-        {
-            std::visit(Executer, decodedInstruction);
-        }
-        catch (...)
-        {
-            DecPC();
-            throw;
-        }
-    }
-
-    void CPU::Reset()
+    try
     {
-        Bus->Write(GetPCAddress(), GetROMBegining());
+        std::visit(Executer, decodedInstruction);
     }
-
-    void CPU::IncPC()
+    catch (...)
     {
-        const Word pc = Bus->Read(GetPCAddress());
-        Bus->Write(GetPCAddress(), pc + sizeof(Word));
+        DecPC();
+        throw;
     }
+}
 
-    void CPU::DecPC()
-    {
-        const Word pc = Bus->Read(GetPCAddress());
-        Bus->Write(GetPCAddress(), pc - sizeof(Word));
-    }
+void CPU::Reset()
+{
+    Bus->Write(GetPCAddress(), GetROMBegining());
+}
+
+void CPU::IncPC()
+{
+    const Word pc = Bus->Read(GetPCAddress());
+    Bus->Write(GetPCAddress(), pc + sizeof(Word));
+}
+
+void CPU::DecPC()
+{
+    const Word pc = Bus->Read(GetPCAddress());
+    Bus->Write(GetPCAddress(), pc - sizeof(Word));
 }
