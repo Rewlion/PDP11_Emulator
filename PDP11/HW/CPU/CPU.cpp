@@ -1,5 +1,6 @@
 #include "CPU.h"
 #include "Decoder.h"
+#include "../../Common/Logs/Logs.h"
 #include "../../Memory/Unibus.h"
 #include "../../Memory/MemoryRegionInformation.h"
 
@@ -20,8 +21,9 @@ void CPU::Step()
     {
         std::visit(Executer, decodedInstruction);
     }
-    catch (...)
+    catch (Common::Error& e)
     {
+        Logger->Log(LogType::Critical, std::string_view(e.what()));
         DecPC();
         throw;
     }
@@ -29,6 +31,13 @@ void CPU::Step()
 
 void CPU::Reset()
 {
+    Bus->Write(GetRegisterAddress(Register::R0), 0);
+    Bus->Write(GetRegisterAddress(Register::R1), 0);
+    Bus->Write(GetRegisterAddress(Register::R2), 0);
+    Bus->Write(GetRegisterAddress(Register::R3), 0);
+    Bus->Write(GetRegisterAddress(Register::R4), 0);
+    Bus->Write(GetRegisterAddress(Register::R5), 0);
+    Bus->Write(GetRegisterAddress(Register::R6), 0);
     Bus->Write(GetPCAddress(), GetROMBegining());
 }
 

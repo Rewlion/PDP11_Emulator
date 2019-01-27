@@ -1,5 +1,6 @@
 #include "Executer.h"
 #include "../../Common/Exceptions/Error.h"
+#include "../../Common/Logs/Logs.h"
 #include "../../Memory/Unibus.h"
 
 #include <assert.h>
@@ -585,23 +586,23 @@ Executer::MemoryAddressingType Executer::GetAddressingMode(const Byte reg) const
         case static_cast<int>(MemoryAddressingType::Register) :
             return MemoryAddressingType::Register;
 
-            case static_cast<int>(MemoryAddressingType::RegisterDeferred) :
-                return MemoryAddressingType::RegisterDeferred;
+        case static_cast<int>(MemoryAddressingType::RegisterDeferred) :
+            return MemoryAddressingType::RegisterDeferred;
 
-                case static_cast<int>(MemoryAddressingType::Autoincrement) :
-                    return MemoryAddressingType::Autoincrement;
+        case static_cast<int>(MemoryAddressingType::Autoincrement) :
+            return MemoryAddressingType::Autoincrement;
 
-                    case static_cast<int>(MemoryAddressingType::AutoincrementDeferred) :
-                        return MemoryAddressingType::AutoincrementDeferred;
+        case static_cast<int>(MemoryAddressingType::AutoincrementDeferred) :
+            return MemoryAddressingType::AutoincrementDeferred;
 
-                        case static_cast<int>(MemoryAddressingType::Index) :
-                            return MemoryAddressingType::Index;
+        case static_cast<int>(MemoryAddressingType::Index) :
+            return MemoryAddressingType::Index;
 
-                            case static_cast<int>(MemoryAddressingType::IndexDeferred) :
-                                return MemoryAddressingType::IndexDeferred;
+        case static_cast<int>(MemoryAddressingType::IndexDeferred) :
+            return MemoryAddressingType::IndexDeferred;
 
-                            default:
-                                throw Common::Error(DBG_LINE, "unknown addressing mode", Common::ErrorType::Critical);
+        default:
+            throw Common::Error(DBG_LINE, "unknown addressing mode", Common::ErrorType::Critical);
     }
 }
 

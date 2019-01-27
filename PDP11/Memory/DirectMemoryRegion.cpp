@@ -2,7 +2,7 @@
 
 DirectMemoryRegion::DirectMemoryRegion(const Word addressBegin, const Word size)
     : MemoryRegion(addressBegin, size)
-    , Memory(new Byte[size])
+    , Memory(new Byte[size]())
     , AllocatedSize(size)
 {
 }
@@ -31,6 +31,7 @@ RawRegion DirectMemoryRegion::CopyMemory() const
     RawRegion raw;
     raw.Memory = new Byte[AllocatedSize];
     raw.AllocatedSize = AllocatedSize;
+    raw.MemoryBegin = GetAddressBegin();
 
     std::memcpy(raw.Memory, Memory, AllocatedSize);
 

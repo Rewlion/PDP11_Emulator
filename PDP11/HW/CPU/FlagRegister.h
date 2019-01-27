@@ -29,7 +29,8 @@ private:
 
 void FlagRegister::SetFlag(const FlagType flag, const Byte value)
 {
-    CHECK((value == 0) || (value == 1), "wrong value for flag.");
+    const bool b = (value == 0) || (value == 1);
+    CHECK(b, "wrong value for flag.");
     Flags[static_cast<int>(flag)] = value;
 }
 

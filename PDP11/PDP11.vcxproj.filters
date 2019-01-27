@@ -16,6 +16,9 @@
     <Filter Include="HW\CPU">
       <UniqueIdentifier>{28ccffa4-9c8c-463e-bc08-46a025248322}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Common\Logs">
+      <UniqueIdentifier>{16b5f90f-ad67-4a06-b0da-414d6c19ad24}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -40,6 +43,9 @@
     </ClCompile>
     <ClCompile Include="HW\CPU\Executer.cpp">
       <Filter>HW\CPU</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\Logs\BaseLog.cpp">
+      <Filter>Common\Logs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -77,8 +83,14 @@
     <ClInclude Include="HW\CPU\Executer.h">
       <Filter>HW\CPU</Filter>
     </ClInclude>
-    <ClInclude Include="Memory\RawRegion.h">
-      <Filter>Memory</Filter>
+    <ClInclude Include="Common\Logs\BaseLog.h">
+      <Filter>Common\Logs</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Logs\LogType.h">
+      <Filter>Common\Logs</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Logs\Logs.h">
+      <Filter>Common\Logs</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -2,19 +2,21 @@
 
 #include "../Common/Types.h"
 
-constexpr Word GetSimulatedMachineMemorySize() { return 1024 * 64; }
+constexpr size_t GetSimulatedMachineMemorySize() { return 1024 * 64; }
 
-constexpr Word GetRAMSize()                    { return 1024 * 16; }
-constexpr Word GetVRAMSize()                   { return 1024 * 16; }
-constexpr Word GetROMSize()                    { return 1024 * 16; }
-constexpr Word GetRegistersSize()              { return 8 * 2; }
-constexpr Word GetIOSize()                     { return 1024 * 16 - GetRegistersSize(); }
+constexpr size_t GetRAMSize()                    { return 1024 * 8; }
+constexpr size_t GetVRAMSize()                   { return 1024 * 32; }
+constexpr size_t GetROMSize()                    { return 1024 * 8; }
+constexpr size_t GetRegistersSize()              { return 8 * 2; }
+constexpr size_t GetIOSize()                     { return 1024 * 16 - GetRegistersSize(); }
 
-constexpr Word GetRAMBegining()                { return 0; }
-constexpr Word GetVRAMBegining()               { return GetRAMSize(); }
-constexpr Word GetROMBegining()                { return GetVRAMBegining() + GetVRAMSize(); }
-constexpr Word GetIOBegining()                 { return GetROMBegining() + GetROMSize(); }
-constexpr Word GetRegistersBegining()          { return GetIOBegining() + GetIOSize(); }
+constexpr size_t GetRAMBegining()                { return 0; }
+constexpr size_t GetVRAMBegining()               { return GetRAMSize(); }
+constexpr size_t GetROMBegining()                { return GetVRAMBegining() + GetVRAMSize(); }
+constexpr size_t GetIOBegining()                 { return GetROMBegining() + GetROMSize(); }
+constexpr size_t GetRegistersBegining()          { return GetIOBegining() + GetIOSize(); }
+
+constexpr size_t GetRegistersNumber()          { return 8; }
 
 enum class MemoryRegionType
 {
@@ -37,17 +39,33 @@ enum class Register : Address
     R7 = 7, PC = 7,
 };
 
+struct RawRegion
+{
+    Byte* Memory        = nullptr;
+    Word  AllocatedSize = 0;
+    Word  MemoryBegin   = 0;
+};
+
 struct RegistersInformation
 {
-    Word R0;
-    Word R1;
-    Word R2;
-    Word R3;
-    Word R4;
-    Word R5;
-    Word R6;
-    Word R7;
+    Word Values[GetRegistersNumber()];
 };
+
+inline const char* GetRegisterName(const unsigned int reg)
+{
+    switch (reg)
+    {
+    case 0:  return "R0";
+    case 1:  return "R1";
+    case 2:  return "R2";
+    case 3:  return "R3";
+    case 4:  return "R4";
+    case 5:  return "R5";
+    case 6:  return "R6";
+    case 7:  return "R7";
+    default: return "UNKNOWN";
+    }
+}
 
 constexpr Address GetPCAddress()
 {

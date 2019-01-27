@@ -1,7 +1,7 @@
 #pragma once
 
 #include "MemoryRegion.h"
-#include "RawRegion.h"
+#include "MemoryRegionInformation.h"
 
 #include <vector>
 

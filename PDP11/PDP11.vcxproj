@@ -39,7 +39,7 @@
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
@@ -88,7 +88,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <PostBuildEvent>
-      <Command>xcopy $(OutDir)* /E /y $(ProjectDir)GUI\Qt\PDP11_GUI\lib\</Command>
+      <Command>xcopy $(OutDir)* /E /y $(ProjectDir)GUI\Qt\lib\</Command>
     </PostBuildEvent>
     <PreLinkEvent>
       <Command>"$(VC_ExecutablePath_x86)\lib.exe" /out:"$(OutDir)$(ProjectName).lib" "$(IntermediateOutputPath)*.obj"</Command>
@@ -124,6 +124,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Common\Exceptions\Error.cpp" />
+    <ClCompile Include="Common\Logs\BaseLog.cpp" />
     <ClCompile Include="Emulator.cpp" />
     <ClCompile Include="HW\CPU\CPU.cpp" />
     <ClCompile Include="HW\CPU\Decoder.cpp" />
@@ -136,6 +137,9 @@
   <ItemGroup>
     <ClInclude Include="Common\Exceptions\Error.h" />
     <ClInclude Include="Common\Instruction.h" />
+    <ClInclude Include="Common\Logs\BaseLog.h" />
+    <ClInclude Include="Common\Logs\Logs.h" />
+    <ClInclude Include="Common\Logs\LogType.h" />
     <ClInclude Include="Common\Types.h" />
     <ClInclude Include="Emulator.h" />
     <ClInclude Include="HW\CPU\CPU.h" />
@@ -145,7 +149,6 @@
     <ClInclude Include="Memory\DirectMemoryRegion.h" />
     <ClInclude Include="Memory\MemoryRegion.h" />
     <ClInclude Include="Memory\MemoryRegionInformation.h" />
-    <ClInclude Include="Memory\RawRegion.h" />
     <ClInclude Include="Memory\Unibus.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

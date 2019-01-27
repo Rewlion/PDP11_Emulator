@@ -1,24 +1,30 @@
 #pragma once
 
-#include "HW/CPU/CPU.h"
-#include "Memory/Unibus.h"
 #include "Memory/MemoryRegionInformation.h"
-#include "Memory/RawRegion.h"
 
 #include <vector>
 #include <string>
+#include <optional>
+
+class CPU;
+class Unibus;
+class MemoryRegion;
 
 class Emulator
 {
 public:
     Emulator();
 
-    void                 UploadProgramToROMFromFile(const std::string& path);
-    void                 Step();
+    void                 Initialize();
+    bool                 UploadProgramToROMFromFile(const std::string& path);
+    bool                 Step();
     void                 Run();
     void                 Stop();
     RegistersInformation GetRegisters() const;
+    Word                 GetRegister(const Register reg) const;
     RawRegion            CopyROM() const;
+    RawRegion            CopyVRAM() const;
+    std::optional<Word>  ReadMemory(const Address at) const;
 
 private:
     void InitializeUnibus();
@@ -27,14 +33,14 @@ private:
     void              UploadProgramToROM(std::vector<Word>&& program);
 
 private:
-    Unibus        Bus;
-    CPU           CPU;
+    Unibus*       pBus;
+    CPU*          pCPU;
 
 	bool          IsAbleToRun;
 
-	MemoryRegion* RAM;
-	MemoryRegion* VRAM;
-	MemoryRegion* ROM;
-	MemoryRegion* IO;
-	MemoryRegion* Registers;
+	MemoryRegion* pRAM;
+	MemoryRegion* pVRAM;
+	MemoryRegion* pROM;
+	MemoryRegion* pIO;
+	MemoryRegion* pRegisters;
 };
