@@ -71,6 +71,9 @@ private:
 
     void ExecuteJMP(const SingleOperandInstruction& instruction);
 
+    //BRANCHES
+    void ExecuteBGT(const BranchInstruction& instruction);
+
 private:
     enum class OperationSizeType
     {

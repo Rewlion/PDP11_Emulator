@@ -266,6 +266,7 @@ void Executer::operator()(const BranchInstruction& instruction)
         break;
 
     case InstructionType::I_BGT:
+        ExecuteBGT(instruction);
         break;
 
     case InstructionType::I_BLE:
@@ -661,6 +662,21 @@ void Executer::ExecuteJMP(const SingleOperandInstruction& instruction)
     const Word valueInRegister = ReadWord(address);
 
     WriteWord(GetPCAddress(), valueInRegister);
+}
+
+void Executer::ExecuteBGT(const BranchInstruction& instruction)
+{
+    const Byte Z = FlagRegister.GetFlag(FlagRegister::FlagType::Zero);
+    const Byte N = FlagRegister.GetFlag(FlagRegister::FlagType::Sign);
+    const Byte V = FlagRegister.GetFlag(FlagRegister::FlagType::Overflow);
+
+    bool f = Z || (N == 0 && V == 0);
+    if (f)
+    {
+        Word pc = ReadWord(GetPCAddress());
+        pc += instruction.Offset;
+        WriteWord(GetPCAddress(), pc);
+    }
 }
 
 Executer::MemoryAddressingType Executer::GetAddressingMode(const Byte reg) const
