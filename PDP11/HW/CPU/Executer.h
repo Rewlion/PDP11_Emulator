@@ -37,12 +37,15 @@ private:
 
     void ExecuteSUB(const DoubleOperandInstruction& instruction);
 
+
     void ExecuteBIC(const DoubleOperandInstruction& instruction);
 
     void ExecuteBICB(const DoubleOperandInstruction& instruction);
 
     // ONE AND HALF
     void ExecuteXOR(const OneAndHalfInstruction& instruction);
+
+    void ExecuteDIV(const OneAndHalfInstruction& instruction);
 
     //SINGLE OPERAND
     void ExecuteCLR(const SingleOperandInstruction& instruction);

@@ -17,6 +17,15 @@ namespace
         else
             return 0;
     }
+
+    template<typename T>
+    inline T Abs(const T value)
+    {
+        if (value >= 0)
+            return value;
+        else
+            return -value;
+    }
 }
 
 Executer::Executer(::FlagRegister& flagRegister, Unibus* bus)
@@ -105,6 +114,7 @@ void Executer::operator()(const OneAndHalfInstruction& instruction)
         break;
 
     case InstructionType::I_DIV:
+        ExecuteDIV(instruction);
         break;
 
     case InstructionType::I_ASH:
@@ -450,6 +460,30 @@ void Executer::ExecuteXOR(const OneAndHalfInstruction& instruction)
     */
 }
 
+void Executer::ExecuteDIV(const OneAndHalfInstruction& instruction)
+{
+    const Word dst = GetSourceAddress(instruction.Destination, OperationSizeType::Word);
+    const Word reg = GetSourceAddress(instruction.Register, OperationSizeType::Word);
+    const short regValue = ReadWord(reg);
+    const short dstValue = ReadWord(dst);
+
+    if (dstValue == 0)
+        throw Common::Error(DBG_LINE, "Attempt to divide by 0.", Common::ErrorType::Warning);
+
+    const short quotient = regValue / dstValue;
+    const short remainder = Abs(regValue) % dstValue;
+
+    const Byte N = quotient < 0 ? 1 : 0;
+    const Byte Z = quotient == 0 ? 1 : 0;
+    
+    FlagRegister.SetFlag(FlagRegister::FlagType::Sign, N);
+    FlagRegister.SetFlag(FlagRegister::FlagType::Zero, Z);
+
+    WriteWord(reg, quotient);
+    if (instruction.Register < static_cast<int>(Register::R7))
+        WriteWord(ConvertRegisterNumberToAddress(instruction.Register + 1), remainder);
+}
+
 void Executer::ExecuteCLR(const SingleOperandInstruction& instruction)
 {
     WriteWord(GetSourceAddress(instruction.Destination, OperationSizeType::Word), 0);
@@ -674,7 +708,8 @@ void Executer::ExecuteBGT(const BranchInstruction& instruction)
     if (f)
     {
         Word pc = ReadWord(GetPCAddress());
-        pc += instruction.Offset;
+        const int offset = static_cast<char>(instruction.Offset) ;
+        pc = static_cast<Word>(static_cast<int>(pc) + offset * 2);
         WriteWord(GetPCAddress(), pc);
     }
 }
