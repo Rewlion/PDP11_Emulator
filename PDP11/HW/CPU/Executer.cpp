@@ -95,6 +95,7 @@ void Executer::operator()(const DoubleOperandInstruction& instruction)
         break;
 
     case InstructionType::I_BIS:
+        ExecuteBIS(instruction);
         break;
 
     case InstructionType::I_BISB:
@@ -118,6 +119,7 @@ void Executer::operator()(const OneAndHalfInstruction& instruction)
         break;
 
     case InstructionType::I_ASH:
+        ExecuteASH(instruction);
         break;
 
     case InstructionType::I_ASHC:
@@ -402,6 +404,26 @@ void Executer::ExecuteSUB(const DoubleOperandInstruction& instruction)
     WriteWord(dst, result);
 }
 
+void Executer::ExecuteBIS(const DoubleOperandInstruction& instruction)
+{
+    const Word src = GetSourceAddress(instruction.Source, OperationSizeType::Word);
+    const Word dst = GetSourceAddress(instruction.Destination, OperationSizeType::Word);
+    const Word srcValue = ReadWord(src);
+    const Word dstValue = ReadWord(dst);
+
+    const Word result = dstValue | srcValue;
+
+    const Byte N = GetWordMSB(result);
+    const Byte Z = result == 0 ? 1 : 0;
+    const Byte V = 0;
+
+    FlagRegister.SetFlag(FlagRegister::FlagType::Overflow, V);
+    FlagRegister.SetFlag(FlagRegister::FlagType::Sign, N);
+    FlagRegister.SetFlag(FlagRegister::FlagType::Zero, Z);
+
+    WriteWord(dst, result);
+}
+
 void Executer::ExecuteBIC(const DoubleOperandInstruction& instruction)
 {
     const Word src = GetSourceAddress(instruction.Source, OperationSizeType::Word);
@@ -482,6 +504,11 @@ void Executer::ExecuteDIV(const OneAndHalfInstruction& instruction)
     WriteWord(reg, quotient);
     if (instruction.Register < static_cast<int>(Register::R7))
         WriteWord(ConvertRegisterNumberToAddress(instruction.Register + 1), remainder);
+}
+
+void Executer::ExecuteASH(const OneAndHalfInstruction& instruction)
+{
+
 }
 
 void Executer::ExecuteCLR(const SingleOperandInstruction& instruction)

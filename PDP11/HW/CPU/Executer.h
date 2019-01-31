@@ -37,6 +37,7 @@ private:
 
     void ExecuteSUB(const DoubleOperandInstruction& instruction);
 
+    void ExecuteBIS(const DoubleOperandInstruction& instruction);
 
     void ExecuteBIC(const DoubleOperandInstruction& instruction);
 
@@ -44,6 +45,8 @@ private:
 
     // ONE AND HALF
     void ExecuteXOR(const OneAndHalfInstruction& instruction);
+
+    void ExecuteASH(const OneAndHalfInstruction& instruction);
 
     void ExecuteDIV(const OneAndHalfInstruction& instruction);
 
