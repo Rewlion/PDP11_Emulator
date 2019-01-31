@@ -61,6 +61,8 @@ private:
 
     void ExecuteADCB(const SingleOperandInstruction& instruction);
 
+    void ExecuteJMP(const SingleOperandInstruction& instruction);
+
 private:
     enum class OperationSizeType
     {

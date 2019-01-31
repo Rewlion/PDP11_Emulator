@@ -36,3 +36,5 @@
 *.app
 
 .vs
+x64
+TestPrograms

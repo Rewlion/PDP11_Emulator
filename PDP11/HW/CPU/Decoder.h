@@ -57,6 +57,8 @@ private:
         { 0005600, IsaEntry{ InstructionGroup::I_SingleOperand, InstructionType::I_SBC, "SBC" } },
         { 0105600, IsaEntry{ InstructionGroup::I_SingleOperand, InstructionType::I_SBCB, "SBCB" } },
         { 0006700, IsaEntry{ InstructionGroup::I_SingleOperand, InstructionType::I_SXT, "SXT" } },
+        //JUMPS
+        { 0000100, IsaEntry{ InstructionGroup::I_Other,         InstructionType::I_JMP, "JMP" } },
         };
     const IsaTable DoubleOperandInstructions = {
         /*Double operand instructions*/
@@ -108,7 +110,6 @@ private:
     };
     const IsaTable Other = { // TODO: IMPLEMENT IN DECODER
                              // Jump & Subroutine
-        { 0000100, IsaEntry{ InstructionGroup::I_Other,         InstructionType::I_JMP,   "JMP" } },
         { 0004000, IsaEntry{ InstructionGroup::I_Other,         InstructionType::I_JSR,   "JSR" } },
         { 0000200, IsaEntry{ InstructionGroup::I_Other,         InstructionType::I_RTS,   "RTS" } },
         { 0006400, IsaEntry{ InstructionGroup::I_Other,         InstructionType::I_MAR,   "MARK" } },

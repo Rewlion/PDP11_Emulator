@@ -189,6 +189,10 @@ void Executer::operator()(const SingleOperandInstruction& instruction)
     case InstructionType::I_SXT:
         break;
 
+    case InstructionType::I_JMP:
+        ExecuteJMP(instruction);
+        break;
+
     default:
         assert(false);
         break;
@@ -576,6 +580,14 @@ void Executer::ExecuteADCB(const SingleOperandInstruction& instruction)
     FlagRegister.SetFlag(FlagRegister::FlagType::Sign, msb);
 
     WriteByte(address, result);
+}
+
+void Executer::ExecuteJMP(const SingleOperandInstruction& instruction)
+{
+    const Address address = GetSourceAddress(instruction.Destination, OperationSizeType::Word);
+    const Word valueInRegister = ReadWord(address);
+
+    WriteWord(GetPCAddress(), valueInRegister);
 }
 
 Executer::MemoryAddressingType Executer::GetAddressingMode(const Byte reg) const
