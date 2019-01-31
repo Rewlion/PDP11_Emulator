@@ -150,7 +150,7 @@ struct BranchInstruction
 {
     const InstructionMeta Meta;
     const Byte Offset;
-    const Byte BaseCode;
+    const Word BaseCode;
 };
 
 typedef std::variant<UnknownInstruction,

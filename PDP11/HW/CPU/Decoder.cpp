@@ -75,7 +75,7 @@ Instruction Decoder::ConstructBranchInstruction(const Word raw) const
         const InstructionMeta meta = it->second;
         const Byte offset = raw & (~BranchInstructionMask);
 
-        return SingleOperandInstruction{ meta, offset, opcode };
+        return BranchInstruction{ meta, offset, opcode };
     }
 
     return ConstructUnknownInstruction();
