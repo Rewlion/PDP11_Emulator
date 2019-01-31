@@ -758,6 +758,12 @@ Executer::MemoryAddressingType Executer::GetAddressingMode(const Byte reg) const
         case static_cast<int>(MemoryAddressingType::AutoincrementDeferred) :
             return MemoryAddressingType::AutoincrementDeferred;
 
+        case static_cast<int>(MemoryAddressingType::Autodecrement) :
+            return MemoryAddressingType::Autodecrement;
+
+        case static_cast<int>(MemoryAddressingType::AutodecrementDeferred) :
+            return MemoryAddressingType::AutodecrementDeferred;
+
         case static_cast<int>(MemoryAddressingType::Index) :
             return MemoryAddressingType::Index;
 
@@ -819,12 +825,23 @@ Word Executer::GetSourceAddress(const Byte source, const OperationSizeType opera
     }
 
     case MemoryAddressingType::Index:
-        CHECK(false, "addressing type is not implemented yet.");
-        break;
+    {
+        const Word pc = Bus->Read(GetPCAddress());
+        const Word addend = Bus->Read(pc);
+        Bus->Write(GetPCAddress(), pc + sizeof(Word));
+        
+        return valueInRegister + addend;
+    }
 
     case MemoryAddressingType::IndexDeferred:
-        CHECK(false, "addressing type is not implemented yet.");
-        break;
+    {
+        const Word pc = Bus->Read(GetPCAddress());
+        const Word addend = Bus->Read(pc);
+        Bus->Write(GetPCAddress(), pc + sizeof(Word));
+        const Word address = Bus->Read(valueInRegister + addend);
+
+        return address;
+    }
     }
     CHECK(false, "unsupported addressing type.");
 }

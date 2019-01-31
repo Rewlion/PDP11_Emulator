@@ -37,7 +37,7 @@ void CPU::Reset()
     Bus->Write(GetRegisterAddress(Register::R3), 0);
     Bus->Write(GetRegisterAddress(Register::R4), 0);
     Bus->Write(GetRegisterAddress(Register::R5), 0);
-    Bus->Write(GetRegisterAddress(Register::R6), 0);
+    Bus->Write(GetRegisterAddress(Register::R6), GetRAMBegining() + GetRAMSize()-sizeof(Word));
     Bus->Write(GetPCAddress(), GetROMBegining());
 }
 
