@@ -5,6 +5,20 @@
 
 #include <assert.h>
 
+namespace
+{
+    template<typename T>
+    inline int Sign(const T value)
+    {
+        if (value > 0)
+            return 1;
+        else if (value < 0)
+            return -1;
+        else
+            return 0;
+    }
+}
+
 Executer::Executer(::FlagRegister& flagRegister, Unibus* bus)
     : FlagRegister(flagRegister)
     , Bus(bus)
@@ -42,9 +56,11 @@ void Executer::operator()(const DoubleOperandInstruction& instruction)
         break;
 
     case InstructionType::I_CMP:
+        ExecuteCMP(instruction);
         break;
 
     case InstructionType::I_CMPB:
+        ExecuteCMPB(instruction);
         break;
 
     case InstructionType::I_ADD:
@@ -291,6 +307,45 @@ void Executer::ExecuteMOVB(const DoubleOperandInstruction& instruction)
 
     WriteByte(GetSourceAddress(instruction.Destination, OperationSizeType::Byte), sourceValue);
 }
+
+void Executer::ExecuteCMP(const DoubleOperandInstruction& instruction)
+{
+    const Word src = GetSourceAddress(instruction.Source, OperationSizeType::Word);
+    const Word dst = GetSourceAddress(instruction.Destination, OperationSizeType::Word);
+    const int srcValue = ReadWord(src);
+    const int dstValue = ReadWord(dst);
+
+    const int result = srcValue - dstValue;
+
+    const Byte N = result < 0 ? 1 : 0;
+    const Byte Z = result == 0 ? 1 : 0;
+    const bool bOverflow = (Sign(srcValue) != Sign(dstValue)) && (Sign(dstValue) == Sign(result));
+    const Byte V = bOverflow ? 1 : 0;
+
+    FlagRegister.SetFlag(FlagRegister::FlagType::Sign, N);
+    FlagRegister.SetFlag(FlagRegister::FlagType::Zero, Z);
+    FlagRegister.SetFlag(FlagRegister::FlagType::Overflow, V);
+}
+
+void Executer::ExecuteCMPB(const DoubleOperandInstruction& instruction)
+{
+    const Word src = GetSourceAddress(instruction.Source, OperationSizeType::Byte);
+    const Word dst = GetSourceAddress(instruction.Destination, OperationSizeType::Byte);
+    const int srcValue = ReadByte(src);
+    const int dstValue = ReadByte(dst);
+
+    const int result = srcValue - dstValue;
+
+    const Byte N = result < 0 ? 1 : 0;
+    const Byte Z = result == 0 ? 1 : 0;
+    const bool bOverflow = (Sign(srcValue) != Sign(dstValue)) && (Sign(dstValue) == Sign(result));
+    const Byte V = bOverflow ? 1 : 0;
+
+    FlagRegister.SetFlag(FlagRegister::FlagType::Sign, N);
+    FlagRegister.SetFlag(FlagRegister::FlagType::Zero, Z);
+    FlagRegister.SetFlag(FlagRegister::FlagType::Overflow, V);
+}
+
 
 void Executer::ExecuteADD(const DoubleOperandInstruction& instruction)
 {

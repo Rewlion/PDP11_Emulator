@@ -25,6 +25,10 @@ private:
     void ExecuteNOP(const NoOperandInstruction& instruction);
 
     // DOUBLE OPERAND
+    void ExecuteCMP(const DoubleOperandInstruction& instruction);
+    
+    void ExecuteCMPB(const DoubleOperandInstruction& instruction);
+
     void ExecuteMOV(const DoubleOperandInstruction& instruction);
 
     void ExecuteMOVB(const DoubleOperandInstruction& instruction);
