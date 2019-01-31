@@ -81,6 +81,20 @@ Instruction Decoder::ConstructBranchInstruction(const Word raw) const
     return ConstructUnknownInstruction();
 }
 
+Instruction Decoder::ConstructNoOperandInstruction(const Word raw) const
+{
+    const auto it = NoOperandInstructions.find(raw);
+
+    if (it != NoOperandInstructions.end())
+    {
+        const InstructionMeta meta = it->second;
+
+        return NoOperandInstruction{ meta, raw };
+    }
+
+    return ConstructUnknownInstruction();
+}
+
 inline bool Decoder::IsDoubleOperandInstruction(const Word raw) const
 {
     const Word opcode = raw & DoubleOperandInstructionMask;
@@ -117,6 +131,14 @@ inline bool Decoder::IsBranchInstruction(const Word raw) const
     return false;
 }
 
+inline bool Decoder::IsNoOperandInstruction(const Word raw) const
+{
+    if (NoOperandInstructions.find(raw) != NoOperandInstructions.end())
+        return true;
+
+    return false;
+}
+
 InstructionGroup  Decoder::GetInstructionGroup(const Word raw) const
 {
     if (IsDoubleOperandInstruction(raw))
@@ -131,6 +153,9 @@ InstructionGroup  Decoder::GetInstructionGroup(const Word raw) const
     if (IsBranchInstruction(raw))
         return InstructionGroup::I_Branch;
 
+    if (IsNoOperandInstruction(raw))
+        return InstructionGroup::I_NoOperand;
+
     return InstructionGroup::I_Unknown;
 }
 
@@ -142,6 +167,7 @@ Instruction Decoder::Decode(const Word raw) const
     case InstructionGroup::I_OneAndHalf:    return ConstructOneAndHalfInstruction(raw);
     case InstructionGroup::I_SingleOperand: return ConstructSingleOperandInstruction(raw);
     case InstructionGroup::I_Branch:        return ConstructBranchInstruction(raw);
+    case InstructionGroup::I_NoOperand:     return ConstructNoOperandInstruction(raw);
     case InstructionGroup::I_Unknown:       return ConstructUnknownInstruction();
 
     default:

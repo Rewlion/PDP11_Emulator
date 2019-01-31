@@ -8,6 +8,7 @@
 enum class InstructionGroup
 {
     I_Unknown,
+    I_NoOperand,
     I_SingleOperand,
     I_DoubleOperand,
     I_OneAndHalf,
@@ -19,6 +20,8 @@ enum class InstructionGroup
 enum class InstructionType
 {
     I_UNKNOWN,
+    /*NO OPERANDS*/
+    I_NOP,
     /*Single operand instructions*/
     I_CLR,
     I_CLRB,
@@ -114,6 +117,12 @@ struct UnknownInstruction
     const InstructionMeta Meta;
 };
 
+struct NoOperandInstruction
+{
+    const InstructionMeta Meta;
+    const Word Opcode;
+};
+
 struct DoubleOperandInstruction
 {
     const InstructionMeta Meta;
@@ -145,6 +154,7 @@ struct BranchInstruction
 };
 
 typedef std::variant<UnknownInstruction,
+    NoOperandInstruction,
     DoubleOperandInstruction,
     OneAndHalfInstruction,
     SingleOperandInstruction,

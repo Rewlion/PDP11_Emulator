@@ -18,14 +18,20 @@ private:
     inline bool       IsOneAndHalfInstruction(const Word raw) const;
     inline bool       IsSingleOperandInstruction(const Word raw) const;
     inline bool       IsBranchInstruction(const Word raw) const;
+    inline bool       IsNoOperandInstruction(const Word raw) const;
     InstructionGroup  GetInstructionGroup(const Word raw) const;
 
     Instruction       ConstructDoubleOperandInstruction(const Word raw) const;
     Instruction       ConstructOneAndHalfInstruction(const Word raw) const;
     Instruction       ConstructSingleOperandInstruction(const Word raw) const;
     Instruction       ConstructBranchInstruction(const Word raw) const;
+    Instruction       ConstructNoOperandInstruction(const Word raw) const;
 
 private:
+    const IsaTable NoOperandInstructions = {
+        { 0000240, IsaEntry{ InstructionGroup::I_NoOperand, InstructionType::I_NOP, "NOP" } },
+    };
+
     const IsaTable SingleOperandInstructions = {
         /*Single operand instructions*/
         //GENERAL

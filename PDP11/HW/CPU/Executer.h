@@ -14,12 +14,16 @@ public:
     Executer(FlagRegister& flagRegister, Unibus* bus);
 
     void operator()(const UnknownInstruction& instruction);
+    void operator()(const NoOperandInstruction& instruction);
     void operator()(const DoubleOperandInstruction& instruction);
     void operator()(const OneAndHalfInstruction& instruction);
     void operator()(const SingleOperandInstruction& instruction);
     void operator()(const BranchInstruction& instruction);
 
 private:
+    //NO OPERAND
+    void ExecuteNOP(const NoOperandInstruction& instruction);
+
     // DOUBLE OPERAND
     void ExecuteMOV(const DoubleOperandInstruction& instruction);
 

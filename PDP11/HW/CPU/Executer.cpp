@@ -16,6 +16,19 @@ void Executer::operator()(const UnknownInstruction& instruction)
     throw Common::Error("Unknown instruction", Common::Critical);
 }
 
+void Executer::operator()(const NoOperandInstruction& instruction)
+{
+    switch (instruction.Meta.Type)
+    {
+    case InstructionType::I_NOP:
+        ExecuteNOP(instruction);
+        break;
+
+    default:
+        throw Common::Error(DBG_LINE, "not Implemented.", Common::ErrorType::Critical);
+    }
+}
+
 void Executer::operator()(const DoubleOperandInstruction& instruction)
 {
     switch (instruction.Meta.Type)
@@ -258,6 +271,11 @@ void Executer::operator()(const BranchInstruction& instruction)
         assert(false);
         break;
     }
+}
+
+void Executer::ExecuteNOP(const NoOperandInstruction& instruction)
+{
+    //DO NOTHING
 }
 
 void Executer::ExecuteMOV(const DoubleOperandInstruction& instruction)
