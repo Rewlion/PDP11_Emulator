@@ -9,7 +9,7 @@ RegistersModel::RegistersModel(const ::QEmulator& emulator, QObject *parent)
 
 int RegistersModel::rowCount(const QModelIndex &parent) const
 {       
-    return GetRegistersNumber();
+    return GetRegistersNumber() + 1/*flagreg*/;
 }
 
 int RegistersModel::columnCount(const QModelIndex &parent) const
@@ -25,13 +25,28 @@ QVariant RegistersModel::data(const QModelIndex &index, int role) const
         {
             if(index.column() == 0)
             {
-                return QString(GetRegisterName(index.row()));
+                if(index.row() == GetRegistersNumber())
+                    return QString("Flags");
+                else
+                    return QString(GetRegisterName(index.row()));
             }
             else
             {
                 const int row = index.row();
                 if(row < GetRegistersNumber())
+                {
                     return QString("0%1").arg(CachedRegisters.Values[row], 0, 8);
+                }
+                if(row == GetRegistersNumber())
+                {
+                    return QString("IPL:%1 T:%2 N:%3 Z:%4 V:%5 C:%6")
+                            .arg(CachedRegisters.Flags.GetFlag(FlagRegister::FlagType::InterruptPriority))
+                            .arg(CachedRegisters.Flags.GetFlag(FlagRegister::FlagType::Trap))
+                            .arg(CachedRegisters.Flags.GetFlag(FlagRegister::FlagType::Sign))
+                            .arg(CachedRegisters.Flags.GetFlag(FlagRegister::FlagType::Zero))
+                            .arg(CachedRegisters.Flags.GetFlag(FlagRegister::FlagType::Overflow))
+                            .arg(CachedRegisters.Flags.GetFlag(FlagRegister::FlagType::Carry));
+                }
                 else
                     return QString("-1");
             }
@@ -45,7 +60,7 @@ void RegistersModel::DoUpdate()
 {
     CachedRegisters = Emulator.GetRegisters();
     const QModelIndex topLeft = createIndex(0,0);
-    const QModelIndex bottomRight = createIndex(GetRegistersNumber(), 2);
+    const QModelIndex bottomRight = createIndex(GetRegistersNumber()+1, 2);
 
     emit dataChanged(topLeft, bottomRight);
 }

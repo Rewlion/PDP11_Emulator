@@ -15,6 +15,7 @@ public:
 
     void Step();
     void Reset();
+    inline FlagRegister GetFlagRegister();
 
 private:
     void IncPC();
@@ -25,3 +26,8 @@ private:
     Decoder Decoder;
     Executer Executer;
 };
+
+FlagRegister CPU::GetFlagRegister()
+{
+    return FlagRegister;
+}

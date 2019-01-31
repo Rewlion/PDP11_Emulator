@@ -149,6 +149,8 @@ RegistersInformation Emulator::GetRegisters() const
     info.Values[6] = pRegisters->Read(GetRegisterAddress(Register::R6));
     info.Values[7] = pRegisters->Read(GetRegisterAddress(Register::R7));
 
+    info.Flags = pCPU->GetFlagRegister();
+
     return info;
 }
 

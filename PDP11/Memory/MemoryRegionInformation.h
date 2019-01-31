@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Common/Types.h"
+#include "../HW/CPU/FlagRegister.h"
 
 constexpr size_t GetSimulatedMachineMemorySize() { return 1024 * 64; }
 
@@ -48,7 +49,8 @@ struct RawRegion
 
 struct RegistersInformation
 {
-    Word Values[GetRegistersNumber()];
+    Word         Values[GetRegistersNumber()];
+    FlagRegister Flags;
 };
 
 inline const char* GetRegisterName(const unsigned int reg)

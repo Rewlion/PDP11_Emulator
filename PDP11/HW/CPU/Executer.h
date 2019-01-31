@@ -108,8 +108,8 @@ private:
     inline void          IncPC();
 
 private:
-    FlagRegister FlagRegister;
-    Unibus*      Bus;
+    FlagRegister& FlagRegister;
+    Unibus*       Bus;
 };
 
 Byte Executer::GetRegisterNumber(const Byte source) const
