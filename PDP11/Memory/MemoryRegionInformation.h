@@ -69,6 +69,11 @@ inline const char* GetRegisterName(const unsigned int reg)
     }
 }
 
+constexpr Address GetSPAddress()
+{
+    return GetRegistersBegining() + static_cast<Address>(Register::SP) * sizeof(Word);
+}
+
 constexpr Address GetPCAddress()
 {
     return GetRegistersBegining() + static_cast<Address>(Register::PC) * sizeof(Word);

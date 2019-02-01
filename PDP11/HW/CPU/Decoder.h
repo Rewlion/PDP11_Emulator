@@ -64,7 +64,8 @@ private:
         { 0105600, IsaEntry{ InstructionGroup::I_SingleOperand, InstructionType::I_SBCB, "SBCB" } },
         { 0006700, IsaEntry{ InstructionGroup::I_SingleOperand, InstructionType::I_SXT, "SXT" } },
         //JUMPS
-        { 0000100, IsaEntry{ InstructionGroup::I_Other,         InstructionType::I_JMP, "JMP" } },
+        { 0000100, IsaEntry{ InstructionGroup::I_SingleOperand, InstructionType::I_JMP, "JMP" } },
+        { 0000200, IsaEntry{ InstructionGroup::I_SingleOperand, InstructionType::I_RTS, "RTS" } },
         };
     const IsaTable DoubleOperandInstructions = {
         /*Double operand instructions*/
@@ -90,6 +91,7 @@ private:
         { 0072000, IsaEntry{ InstructionGroup::I_OneAndHalf,    InstructionType::I_ASH , "ASH" } },
         { 0073000, IsaEntry{ InstructionGroup::I_OneAndHalf,    InstructionType::I_ASHC, "ASHC" } },
         { 0074000, IsaEntry{ InstructionGroup::I_OneAndHalf,    InstructionType::I_XOR , "XOR" } },
+        { 0004000, IsaEntry{ InstructionGroup::I_OneAndHalf,    InstructionType::I_JSR,  "JSR" } },
     };
     const IsaTable BranchInstructions = {
         /*Program control instructions*/
@@ -116,8 +118,6 @@ private:
     };
     const IsaTable Other = { // TODO: IMPLEMENT IN DECODER
                              // Jump & Subroutine
-        { 0004000, IsaEntry{ InstructionGroup::I_Other,         InstructionType::I_JSR,   "JSR" } },
-        { 0000200, IsaEntry{ InstructionGroup::I_Other,         InstructionType::I_RTS,   "RTS" } },
         { 0006400, IsaEntry{ InstructionGroup::I_Other,         InstructionType::I_MAR,   "MARK" } },
         { 0077000, IsaEntry{ InstructionGroup::I_Other,         InstructionType::I_SOB,   "SOB" } },
         //Trap & Interrupt

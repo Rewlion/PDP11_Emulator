@@ -50,6 +50,8 @@ private:
 
     void ExecuteDIV(const OneAndHalfInstruction& instruction);
 
+    void ExecuteJSR(const OneAndHalfInstruction& instruction);
+
     //SINGLE OPERAND
     void ExecuteCLR(const SingleOperandInstruction& instruction);
 
@@ -70,6 +72,8 @@ private:
     void ExecuteROR(const SingleOperandInstruction& instruction);
 
     void ExecuteRORB(const SingleOperandInstruction& instruction);
+
+    void ExecuteRTS(const SingleOperandInstruction& instruction);
 
     void ExecuteADC(const SingleOperandInstruction& instruction);
 
@@ -111,6 +115,8 @@ private:
     void                 WriteByte(const Address address, const Byte value);
     void                 WriteWord(const Address address, const Word value);
 
+    inline void          PushWord(const Word value);
+    inline Word          PopWord();
     inline void          IncPC();
 
 private:
@@ -138,6 +144,24 @@ Byte Executer::GetByteMSB(const Byte byte) const
 Byte Executer::GetWordMSB(const Word word) const
 {
     return word >> 15;
+}
+
+void Executer::PushWord(const Word value)
+{
+    const Word currentHead = Bus->Read(GetSPAddress());
+    const Word newHead = currentHead - sizeof(Word);
+    Bus->Write(GetSPAddress(), newHead);
+    Bus->Write(newHead, value);
+}
+
+Word Executer::PopWord()
+{
+    const Word currentHead = Bus->Read(GetSPAddress());
+    const Word headValue = Bus->Read(currentHead);
+    const Word newHead = currentHead + sizeof(Word);
+    Bus->Write(GetSPAddress(), newHead);
+
+    return headValue;
 }
 
 void Executer::IncPC()

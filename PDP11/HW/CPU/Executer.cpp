@@ -129,6 +129,10 @@ void Executer::operator()(const OneAndHalfInstruction& instruction)
         ExecuteXOR(instruction);
         break;
 
+    case InstructionType::I_JSR:
+        ExecuteJSR(instruction);
+        break;
+
     default:
         assert(false);
         break;
@@ -208,6 +212,10 @@ void Executer::operator()(const SingleOperandInstruction& instruction)
         break;
 
     case InstructionType::I_ROLB:
+        break;
+
+    case InstructionType::I_RTS:
+        ExecuteRTS(instruction);
         break;
 
     case InstructionType::I_SWAB:
@@ -506,6 +514,19 @@ void Executer::ExecuteDIV(const OneAndHalfInstruction& instruction)
         WriteWord(ConvertRegisterNumberToAddress(instruction.Register + 1), remainder);
 }
 
+void Executer::ExecuteJSR(const OneAndHalfInstruction& instruction)
+{
+    const Word dst = GetSourceAddress(instruction.Destination, OperationSizeType::Word);
+    const Word reg = GetSourceAddress(instruction.Register, OperationSizeType::Word);
+    const Word regValue = ReadWord(reg);
+    const Word dstValue = ReadWord(dst);
+    const Word pc = ReadWord(GetPCAddress());
+
+    PushWord(regValue);
+    WriteWord(reg, pc);
+    WriteWord(GetPCAddress(), dstValue);
+}
+
 void Executer::ExecuteASH(const OneAndHalfInstruction& instruction)
 {
 
@@ -679,6 +700,16 @@ void Executer::ExecuteRORB(const SingleOperandInstruction& instruction)
     FlagRegister.SetFlag(FlagRegister::FlagType::Carry, newCarryBit);
 
     WriteByte(address, result);
+}
+
+void Executer::ExecuteRTS(const SingleOperandInstruction& instruction)
+{
+    const Word address = GetSourceAddress(instruction.Destination & 07, OperationSizeType::Byte);
+    const Word valueInRegister = ReadWord(address);
+
+    WriteWord(GetPCAddress(), valueInRegister);
+    const Word sp = PopWord();
+    WriteWord(address, sp);
 }
 
 void Executer::ExecuteADC(const SingleOperandInstruction& instruction)
