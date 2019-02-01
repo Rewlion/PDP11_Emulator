@@ -2,8 +2,8 @@
 
 namespace
 {
-    const int rows = 512;
-    const int columns = 512;
+    const int rows = 128;
+    const int columns = 128;
 
     int Get2D(const int x, const int y)
     {
@@ -40,19 +40,18 @@ void VideoController::Start()
 
 QImage VideoController::ConstructFrame()
 {
-    QImage img(512,512, QImage::Format::Format_Mono);
+    QImage img(columns,rows, QImage::Format::Format_Mono);
     RawRegion rom = Emulator.CopyVRAM();
 
     for(int x = 0; x < columns; ++x)
         for(int y = 0; y < rows; ++y)
         {
             const int i = Get2D(x,y);
-            const int nByte = i / 8;
-            const int nBit  = i % 8;
-            const uint8_t byte = rom.Memory[nByte];
-            const uint8_t value = (byte >> nBit) & 1;
+            const uint8_t value = rom.Memory[i];
             img.setPixel(x,y, value);
         }
+
+    delete rom.Memory;
 
     return img;
 }

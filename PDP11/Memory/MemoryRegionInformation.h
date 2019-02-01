@@ -5,9 +5,9 @@
 
 constexpr size_t GetSimulatedMachineMemorySize() { return 1024 * 64; }
 
-constexpr size_t GetRAMSize()                    { return 1024 * 8; }
-constexpr size_t GetVRAMSize()                   { return 1024 * 32; }
-constexpr size_t GetROMSize()                    { return 1024 * 8; }
+constexpr size_t GetRAMSize()                    { return 1024 * 16; }
+constexpr size_t GetVRAMSize()                   { return 1024 * 16; }
+constexpr size_t GetROMSize()                    { return 1024 * 16; }
 constexpr size_t GetRegistersSize()              { return 8 * 2; }
 constexpr size_t GetIOSize()                     { return 1024 * 16 - GetRegistersSize(); }
 
