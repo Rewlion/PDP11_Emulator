@@ -899,7 +899,8 @@ Word Executer::GetSourceAddress(const Byte source, const OperationSizeType opera
 
     case MemoryAddressingType::Autodecrement:
     {
-        const Word subtrahend = operationSizeType == OperationSizeType::Byte ? sizeof(Byte) : sizeof(Word);
+        const bool b = (operationSizeType == OperationSizeType::Byte) && (registerNumber != static_cast<Word>(Register::PC));
+        const Word subtrahend = b ? sizeof(Byte) : sizeof(Word);
         Bus->Write(registerAddress, valueInRegister - subtrahend);
 
         return valueInRegister - subtrahend;
@@ -915,7 +916,8 @@ Word Executer::GetSourceAddress(const Byte source, const OperationSizeType opera
 
     case MemoryAddressingType::Autoincrement:
     {
-        const Word addend = operationSizeType == OperationSizeType::Byte ? sizeof(Byte) : sizeof(Word);
+        const bool b = (operationSizeType == OperationSizeType::Byte) && (registerNumber != static_cast<Word>(Register::PC));
+        const Word addend = b ? sizeof(Byte) : sizeof(Word);
         Bus->Write(registerAddress, valueInRegister + addend);
 
         return valueInRegister;
