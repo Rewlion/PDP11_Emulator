@@ -26,6 +26,11 @@ namespace
         else
             return -value;
     }
+
+    inline void NOT_IMPLEMENTED()
+    {
+        throw Common::Error(DBG_LINE, "not Implemented.", Common::ErrorType::Critical);
+    }
 }
 
 Executer::Executer(::FlagRegister& flagRegister, Unibus* bus)
@@ -48,7 +53,7 @@ void Executer::operator()(const NoOperandInstruction& instruction)
         break;
 
     default:
-        throw Common::Error(DBG_LINE, "not Implemented.", Common::ErrorType::Critical);
+        NOT_IMPLEMENTED();
     }
 }
 
@@ -81,9 +86,11 @@ void Executer::operator()(const DoubleOperandInstruction& instruction)
         break;
 
     case InstructionType::I_BIT:
+        NOT_IMPLEMENTED();
         break;
 
     case InstructionType::I_BITB:
+        NOT_IMPLEMENTED();
         break;
 
     case InstructionType::I_BIC:
@@ -99,6 +106,7 @@ void Executer::operator()(const DoubleOperandInstruction& instruction)
         break;
 
     case InstructionType::I_BISB:
+        NOT_IMPLEMENTED();
         break;
 
     default:
@@ -112,6 +120,7 @@ void Executer::operator()(const OneAndHalfInstruction& instruction)
     switch (instruction.Meta.Type)
     {
     case InstructionType::I_MUL:
+        ExecuteMUL(instruction);
         break;
 
     case InstructionType::I_DIV:
@@ -123,6 +132,7 @@ void Executer::operator()(const OneAndHalfInstruction& instruction)
         break;
 
     case InstructionType::I_ASHC:
+        NOT_IMPLEMENTED();
         break;
 
     case InstructionType::I_XOR:
@@ -153,9 +163,11 @@ void Executer::operator()(const SingleOperandInstruction& instruction)
         break;
 
     case InstructionType::I_COM:
+        NOT_IMPLEMENTED();
         break;
 
     case InstructionType::I_COMB:
+        NOT_IMPLEMENTED();
         break;
 
     case InstructionType::I_INC:
@@ -167,9 +179,11 @@ void Executer::operator()(const SingleOperandInstruction& instruction)
         break;
 
     case InstructionType::I_DEC:
+        NOT_IMPLEMENTED();
         break;
 
     case InstructionType::I_DECB:
+        NOT_IMPLEMENTED();
         break;
 
     case InstructionType::I_NEG:
@@ -181,9 +195,11 @@ void Executer::operator()(const SingleOperandInstruction& instruction)
         break;
 
     case InstructionType::I_TST:
+        NOT_IMPLEMENTED();
         break;
 
     case InstructionType::I_TSTB:
+        NOT_IMPLEMENTED();
         break;
 
     case InstructionType::I_ASR:
@@ -195,9 +211,11 @@ void Executer::operator()(const SingleOperandInstruction& instruction)
         break;
 
     case InstructionType::I_ASL:
+        NOT_IMPLEMENTED();
         break;
 
     case InstructionType::I_ASLB:
+        NOT_IMPLEMENTED();
         break;
 
     case InstructionType::I_ROR:
@@ -209,9 +227,11 @@ void Executer::operator()(const SingleOperandInstruction& instruction)
         break;
 
     case InstructionType::I_ROL:
+        NOT_IMPLEMENTED();
         break;
 
     case InstructionType::I_ROLB:
+        NOT_IMPLEMENTED();
         break;
 
     case InstructionType::I_RTS:
@@ -219,6 +239,7 @@ void Executer::operator()(const SingleOperandInstruction& instruction)
         break;
 
     case InstructionType::I_SWAB:
+        NOT_IMPLEMENTED();
         break;
 
     case InstructionType::I_ADC:
@@ -230,12 +251,15 @@ void Executer::operator()(const SingleOperandInstruction& instruction)
         break;
 
     case InstructionType::I_SBC:
+        NOT_IMPLEMENTED();
         break;
 
     case InstructionType::I_SBCB:
+        NOT_IMPLEMENTED();
         break;
 
     case InstructionType::I_SXT:
+        NOT_IMPLEMENTED();
         break;
 
     case InstructionType::I_JMP:
@@ -253,36 +277,47 @@ void Executer::operator()(const BranchInstruction& instruction)
     switch (instruction.Meta.Type)
     {
     case InstructionType::I_BR:
+        NOT_IMPLEMENTED();
         break;
 
     case InstructionType::I_BNE:
+        NOT_IMPLEMENTED();
         break;
 
     case InstructionType::I_BEQ:
+        NOT_IMPLEMENTED();
         break;
 
     case InstructionType::I_BPL:
+        NOT_IMPLEMENTED();
         break;
 
     case InstructionType::I_BMI:
+        NOT_IMPLEMENTED();
         break;
 
     case InstructionType::I_BVC:
+        NOT_IMPLEMENTED();
         break;
 
     case InstructionType::I_BVS:
+        NOT_IMPLEMENTED();
         break;
 
     case InstructionType::I_BCC:
+        NOT_IMPLEMENTED();
         break;
 
     case InstructionType::I_BCS:
+        NOT_IMPLEMENTED();
         break;
 
     case InstructionType::I_BGE:
+        NOT_IMPLEMENTED();
         break;
 
     case InstructionType::I_BLT:
+        NOT_IMPLEMENTED();
         break;
 
     case InstructionType::I_BGT:
@@ -290,18 +325,23 @@ void Executer::operator()(const BranchInstruction& instruction)
         break;
 
     case InstructionType::I_BLE:
+        NOT_IMPLEMENTED();
         break;
 
     case InstructionType::I_BHI:
+        NOT_IMPLEMENTED();
         break;
 
     case InstructionType::I_BLOS:
+        NOT_IMPLEMENTED();
         break;
 
     case InstructionType::I_BHIS:
+        NOT_IMPLEMENTED();
         break;
 
     case InstructionType::I_BLO:
+        NOT_IMPLEMENTED();
         break;
 
     default:
@@ -488,6 +528,40 @@ void Executer::ExecuteXOR(const OneAndHalfInstruction& instruction)
     FlagRegister.SetFlag(FlagRegister::FlagType::Zero, zeroBit);
     FlagRegister.SetFlag(FlagRegister::FlagType::Sign, msb);
     */
+}
+
+void Executer::ExecuteMUL(const OneAndHalfInstruction& instruction)
+{
+    const Word dst = GetSourceAddress(instruction.Destination, OperationSizeType::Word);
+    const Word reg = GetSourceAddress(instruction.Register, OperationSizeType::Word);
+    const short regValue = ReadWord(reg);
+    const short dstValue = ReadWord(dst);
+
+    union
+    {
+        int Raw;
+        struct
+        {
+            short Low;
+            short High;
+        };
+    } product;
+
+    product.Raw = regValue * dstValue;
+
+    const Byte N = product.Raw < 0 ? 1 : 0;
+    const Byte Z = product.Raw == 0 ? 1 : 0;
+    const Byte V = 0;
+    const Byte C = product.Raw < (-(1 << 15)) || product.Raw >= ((1 << 15) - 1) ? 1 : 0;
+
+    FlagRegister.SetFlag(FlagRegister::FlagType::Carry, C);
+    FlagRegister.SetFlag(FlagRegister::FlagType::Overflow, V);
+    FlagRegister.SetFlag(FlagRegister::FlagType::Sign, N);
+    FlagRegister.SetFlag(FlagRegister::FlagType::Zero, Z);
+
+    WriteWord(ConvertRegisterNumberToAddress(instruction.Register), product.Low);
+    if (instruction.Register % 2 == 0)
+        WriteWord(ConvertRegisterNumberToAddress(instruction.Register + 1), product.High);
 }
 
 void Executer::ExecuteDIV(const OneAndHalfInstruction& instruction)

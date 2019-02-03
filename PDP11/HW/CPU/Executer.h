@@ -48,6 +48,8 @@ private:
 
     void ExecuteASH(const OneAndHalfInstruction& instruction);
 
+    void ExecuteMUL(const OneAndHalfInstruction& instruction);
+
     void ExecuteDIV(const OneAndHalfInstruction& instruction);
 
     void ExecuteJSR(const OneAndHalfInstruction& instruction);
