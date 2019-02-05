@@ -25,6 +25,7 @@ MainWindow::MainWindow(QWidget *parent) :
     logs->setModel(logModel);
 
     connect(this, &MainWindow::OnStep, &Emulator, &QEmulator::DoStep);
+    connect(this, &MainWindow::OnRun, &Emulator, &QEmulator::DoRun);
     connect(this, &MainWindow::OnProgramUpload, &Emulator, &QEmulator::DoUploadProgram);
     Emulator.Initialize();
     Emulator.moveToThread(&EmulatorThread);
@@ -77,4 +78,14 @@ void MainWindow::on_stepButton_clicked()
 void MainWindow::on_actionDumpMemory_triggered()
 {
     DumpWidget->show();
+}
+
+void MainWindow::on_runButton_clicked()
+{
+    emit OnRun();
+}
+
+void MainWindow::on_stopButton_clicked()
+{
+    Emulator.DoStop();
 }

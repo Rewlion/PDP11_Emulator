@@ -21,6 +21,8 @@ public:
 
 signals:
     void OnStep();
+    void OnRun();
+    void OnStop();
     void OnProgramUpload(const QString& path);
 
 private slots:
@@ -31,6 +33,10 @@ private slots:
     void on_stepButton_clicked();
 
     void on_actionDumpMemory_triggered();
+
+    void on_runButton_clicked();
+
+    void on_stopButton_clicked();
 
 private:
     Ui::MainWindow*       ui;

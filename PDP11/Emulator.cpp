@@ -118,15 +118,8 @@ void Emulator::Run()
     IsAbleToRun = true;
     while (IsAbleToRun)
     {
-        try
-        {
-            Step();
-        }
-        catch (...)
-        {
+        if (Step() == false)
             IsAbleToRun = false;
-        }
-
     }
 }
 

@@ -15,6 +15,8 @@ signals:
 
 public slots:
     void DoStep();
+    void DoRun();
+    void DoStop();
     void DoUploadProgram(const QString& path);
 };
 
