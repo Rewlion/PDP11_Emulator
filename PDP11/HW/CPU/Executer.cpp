@@ -383,9 +383,9 @@ void Executer::ExecuteCMP(const DoubleOperandInstruction& instruction)
     const bool bOverflow = (Sign(srcValue) != Sign(dstValue)) && (Sign(dstValue) == Sign(result));
     const Byte V = bOverflow ? 1 : 0;
 
-    FlagRegister.SetFlag(FlagRegister::FlagType::Sign, N);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Zero, Z);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Overflow, V);
+    FlagRegister.Sign = N;
+    FlagRegister.Zero = Z;
+    FlagRegister.Overflow = V;
 }
 
 void Executer::ExecuteCMPB(const DoubleOperandInstruction& instruction)
@@ -402,9 +402,9 @@ void Executer::ExecuteCMPB(const DoubleOperandInstruction& instruction)
     const bool bOverflow = (Sign(srcValue) != Sign(dstValue)) && (Sign(dstValue) == Sign(result));
     const Byte V = bOverflow ? 1 : 0;
 
-    FlagRegister.SetFlag(FlagRegister::FlagType::Sign, N);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Zero, Z);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Overflow, V);
+    FlagRegister.Sign = N;
+    FlagRegister.Zero = Z;
+    FlagRegister.Overflow = V;
 }
 
 
@@ -422,10 +422,10 @@ void Executer::ExecuteADD(const DoubleOperandInstruction& instruction)
     const Byte zeroBit = result == 0 ? 1 : 0;
     const Byte msb = GetWordMSB(result);
 
-    FlagRegister.SetFlag(FlagRegister::FlagType::Carry, carryBit);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Overflow, overflowBit);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Sign, msb);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Zero, zeroBit);
+    FlagRegister.Carry = carryBit;
+    FlagRegister.Overflow = overflowBit;
+    FlagRegister.Sign = msb;
+    FlagRegister.Zero = zeroBit;
 
     WriteWord(dst, result);
 }
@@ -444,10 +444,10 @@ void Executer::ExecuteSUB(const DoubleOperandInstruction& instruction)
     const Byte zeroBit = result == 0 ? 1 : 0;
     const Byte msb = GetWordMSB(result);
 
-    FlagRegister.SetFlag(FlagRegister::FlagType::Carry, carryBit);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Overflow, overflowBit);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Sign, msb);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Zero, zeroBit);
+    FlagRegister.Carry = carryBit;
+    FlagRegister.Overflow = overflowBit;
+    FlagRegister.Sign = msb;
+    FlagRegister.Zero = zeroBit;
 
     WriteWord(dst, result);
 }
@@ -465,9 +465,9 @@ void Executer::ExecuteBIS(const DoubleOperandInstruction& instruction)
     const Byte Z = result == 0 ? 1 : 0;
     const Byte V = 0;
 
-    FlagRegister.SetFlag(FlagRegister::FlagType::Overflow, V);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Sign, N);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Zero, Z);
+    FlagRegister.Sign = N;
+    FlagRegister.Zero = Z;
+    FlagRegister.Overflow = V;
 
     WriteWord(dst, result);
 }
@@ -485,9 +485,9 @@ void Executer::ExecuteBIC(const DoubleOperandInstruction& instruction)
     const Byte msb = GetWordMSB(result);
     const Byte overflowBit = 0;
 
-    FlagRegister.SetFlag(FlagRegister::FlagType::Overflow, overflowBit);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Zero, zeroBit);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Sign, msb);
+    FlagRegister.Overflow = overflowBit;
+    FlagRegister.Zero = zeroBit;
+    FlagRegister.Sign = msb;
 
     WriteWord(dst, result);
 }
@@ -505,9 +505,9 @@ void Executer::ExecuteBICB(const DoubleOperandInstruction& instruction)
     const Byte msb = GetByteMSB(result);
     const Byte overflowBit = 0;
 
-    FlagRegister.SetFlag(FlagRegister::FlagType::Overflow, overflowBit);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Zero, zeroBit);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Sign, msb);
+    FlagRegister.Overflow = overflowBit;
+    FlagRegister.Zero = zeroBit;
+    FlagRegister.Sign = msb;
 
     WriteByte(dst, result);
 }
@@ -554,10 +554,10 @@ void Executer::ExecuteMUL(const OneAndHalfInstruction& instruction)
     const Byte V = 0;
     const Byte C = product.Raw < (-(1 << 15)) || product.Raw >= ((1 << 15) - 1) ? 1 : 0;
 
-    FlagRegister.SetFlag(FlagRegister::FlagType::Carry, C);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Overflow, V);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Sign, N);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Zero, Z);
+    FlagRegister.Carry = C;
+    FlagRegister.Sign = N;
+    FlagRegister.Zero = Z;
+    FlagRegister.Overflow = V;
 
     WriteWord(ConvertRegisterNumberToAddress(instruction.Register), product.Low);
     if (instruction.Register % 2 == 0)
@@ -580,8 +580,8 @@ void Executer::ExecuteDIV(const OneAndHalfInstruction& instruction)
     const Byte N = quotient < 0 ? 1 : 0;
     const Byte Z = quotient == 0 ? 1 : 0;
     
-    FlagRegister.SetFlag(FlagRegister::FlagType::Sign, N);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Zero, Z);
+    FlagRegister.Sign = N;
+    FlagRegister.Zero = Z;
 
     WriteWord(reg, quotient);
     if (instruction.Register < static_cast<int>(Register::R7))
@@ -610,20 +610,20 @@ void Executer::ExecuteCLR(const SingleOperandInstruction& instruction)
 {
     WriteWord(GetSourceAddress(instruction.Destination, OperationSizeType::Word), 0);
 
-    FlagRegister.SetFlag(FlagRegister::FlagType::Carry, 0);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Overflow, 0);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Sign, 0);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Zero, 1);
+    FlagRegister.Carry = 0;
+    FlagRegister.Overflow = 0;
+    FlagRegister.Sign = 0;
+    FlagRegister.Zero = 1;
 }
 
 void Executer::ExecuteCLRB(const SingleOperandInstruction& instruction)
 {
     WriteByte(GetSourceAddress(instruction.Destination, OperationSizeType::Byte), 0);
 
-    FlagRegister.SetFlag(FlagRegister::FlagType::Carry, 0);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Overflow, 0);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Sign, 0);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Zero, 1);
+    FlagRegister.Carry = 0;
+    FlagRegister.Overflow = 0;
+    FlagRegister.Sign = 0;
+    FlagRegister.Zero = 1;
 }
 
 void Executer::ExecuteINC(const SingleOperandInstruction& instruction)
@@ -635,9 +635,9 @@ void Executer::ExecuteINC(const SingleOperandInstruction& instruction)
     const Byte zeroBit = result == 0 ? 1 : 0;
     const Byte msb = GetWordMSB(result);
 
-    FlagRegister.SetFlag(FlagRegister::FlagType::Overflow, overflowBit);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Zero, zeroBit);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Sign, msb);
+    FlagRegister.Overflow = overflowBit;
+    FlagRegister.Zero = zeroBit;
+    FlagRegister.Sign = msb;
 
     WriteWord(GetSourceAddress(instruction.Destination, OperationSizeType::Word), result);
 }
@@ -651,9 +651,9 @@ void Executer::ExecuteINCB(const SingleOperandInstruction& instruction)
     const Byte zeroBit = result == 0 ? 1 : 0;
     const Byte msb = GetByteMSB(result);
 
-    FlagRegister.SetFlag(FlagRegister::FlagType::Overflow, overflowBit);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Zero, zeroBit);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Sign, msb);
+    FlagRegister.Overflow = overflowBit;
+    FlagRegister.Zero = zeroBit;
+    FlagRegister.Sign = msb;
 
     WriteByte(GetSourceAddress(instruction.Destination, OperationSizeType::Byte), result);
 }
@@ -669,10 +669,10 @@ void Executer::ExecuteNEG(const SingleOperandInstruction& instruction)
     const Byte msb = GetWordMSB(result);
     const Byte carryBit = result != 0 ? 1 : 0;
 
-    FlagRegister.SetFlag(FlagRegister::FlagType::Overflow, overflowBit);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Zero, zeroBit);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Sign, msb);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Carry, carryBit);
+    FlagRegister.Overflow = overflowBit;
+    FlagRegister.Zero = zeroBit;
+    FlagRegister.Sign = msb;
+    FlagRegister.Carry = carryBit;
 
     WriteWord(address, result);
 }
@@ -688,10 +688,10 @@ void Executer::ExecuteNEGB(const SingleOperandInstruction& instruction)
     const Byte msb = GetByteMSB(result);
     const Byte carryBit = result != 0 ? 1 : 0;
 
-    FlagRegister.SetFlag(FlagRegister::FlagType::Overflow, overflowBit);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Zero, zeroBit);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Sign, msb);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Carry, carryBit);
+    FlagRegister.Overflow = overflowBit;
+    FlagRegister.Zero = zeroBit;
+    FlagRegister.Sign = msb;
+    FlagRegister.Carry = carryBit;
 
     WriteByte(address, result);
 }
@@ -707,10 +707,10 @@ void Executer::ExecuteASR(const SingleOperandInstruction& instruction)
     const Byte carryBit = 01 & valueInRegister;
     const Byte overflowBit = 01 & (carryBit | msb);
 
-    FlagRegister.SetFlag(FlagRegister::FlagType::Overflow, overflowBit);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Zero, zeroBit);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Sign, msb);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Carry, carryBit);
+    FlagRegister.Overflow = overflowBit;
+    FlagRegister.Zero = zeroBit;
+    FlagRegister.Sign = msb;
+    FlagRegister.Carry = carryBit;
 
     WriteWord(address, result);
 }
@@ -726,10 +726,10 @@ void Executer::ExecuteASRB(const SingleOperandInstruction& instruction)
     const Byte carryBit = 01 & valueInRegister;
     const Byte overflowBit = 01 & (carryBit | msb);
 
-    FlagRegister.SetFlag(FlagRegister::FlagType::Overflow, overflowBit);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Zero, zeroBit);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Sign, msb);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Carry, carryBit);
+    FlagRegister.Overflow = overflowBit;
+    FlagRegister.Zero = zeroBit;
+    FlagRegister.Sign = msb;
+    FlagRegister.Carry = carryBit;
 
     WriteByte(address, result);
 }
@@ -740,17 +740,17 @@ void Executer::ExecuteROR(const SingleOperandInstruction& instruction)
     const Word valueInRegister = ReadWord(address);
 
     const Byte newCarryBit = valueInRegister & 01;
-    const Byte oldCarryBit = FlagRegister.GetFlag(FlagRegister::FlagType::Carry);
+    const Byte oldCarryBit = FlagRegister.Carry;
     const Word result = (valueInRegister >> 1) | (oldCarryBit << 15);
 
     const Byte zeroBit = result == 0 ? 1 : 0;
     const Byte msb = GetWordMSB(result);
     const Byte overflowBit = 01 & (newCarryBit | msb);
 
-    FlagRegister.SetFlag(FlagRegister::FlagType::Overflow, overflowBit);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Zero, zeroBit);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Sign, msb);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Carry, newCarryBit);
+    FlagRegister.Overflow = overflowBit;
+    FlagRegister.Zero = zeroBit;
+    FlagRegister.Sign = msb;
+    FlagRegister.Carry = newCarryBit;
 
     WriteWord(address, result);
 }
@@ -761,17 +761,17 @@ void Executer::ExecuteRORB(const SingleOperandInstruction& instruction)
     const Byte valueInRegister = ReadByte(address);
 
     const Byte newCarryBit = valueInRegister & 01;
-    const Byte oldCarryBit = FlagRegister.GetFlag(FlagRegister::FlagType::Carry);
+    const Byte oldCarryBit = FlagRegister.Carry;
     const Byte result = (valueInRegister >> 1) | (oldCarryBit << 7);
 
     const Byte zeroBit = result == 0 ? 1 : 0;
     const Byte msb = GetByteMSB(result);
     const Byte overflowBit = 01 & (newCarryBit | msb);
 
-    FlagRegister.SetFlag(FlagRegister::FlagType::Overflow, overflowBit);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Zero, zeroBit);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Sign, msb);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Carry, newCarryBit);
+    FlagRegister.Overflow = overflowBit;
+    FlagRegister.Zero = zeroBit;
+    FlagRegister.Sign = msb;
+    FlagRegister.Carry = newCarryBit;
 
     WriteByte(address, result);
 }
@@ -790,16 +790,16 @@ void Executer::ExecuteADC(const SingleOperandInstruction& instruction)
 {
     const Word address = GetSourceAddress(instruction.Destination, OperationSizeType::Word);
     const Word valueInRegister = ReadWord(address);
-    const Byte carryBit = FlagRegister.GetFlag(FlagRegister::FlagType::Carry);
+    const Byte carryBit = FlagRegister.Carry;
 
     const Word result = valueInRegister + carryBit;
     const Byte overflowBit = result < valueInRegister ? 1 : 0;
     const Byte zeroBit = result == 0 ? 1 : 0;
     const Byte msb = GetWordMSB(result);
 
-    FlagRegister.SetFlag(FlagRegister::FlagType::Overflow, overflowBit);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Zero, zeroBit);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Sign, msb);
+    FlagRegister.Overflow = overflowBit;
+    FlagRegister.Zero = zeroBit;
+    FlagRegister.Sign = msb;
 
     WriteWord(address, result);
 }
@@ -808,16 +808,16 @@ void Executer::ExecuteADCB(const SingleOperandInstruction& instruction)
 {
     const Address address = GetSourceAddress(instruction.Destination, OperationSizeType::Byte);
     const Byte valueInRegister = ReadByte(address);
-    const Byte carryBit = FlagRegister.GetFlag(FlagRegister::FlagType::Carry);
+    const Byte carryBit = FlagRegister.Carry;
 
     const Byte result = valueInRegister + carryBit;
     const Byte overflowBit = result < valueInRegister ? 1 : 0;
     const Byte zeroBit = result == 0 ? 1 : 0;
     const Byte msb = GetByteMSB(result);
 
-    FlagRegister.SetFlag(FlagRegister::FlagType::Overflow, overflowBit);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Zero, zeroBit);
-    FlagRegister.SetFlag(FlagRegister::FlagType::Sign, msb);
+    FlagRegister.Overflow = overflowBit;
+    FlagRegister.Zero = zeroBit;
+    FlagRegister.Sign = msb;
 
     WriteByte(address, result);
 }
@@ -832,9 +832,9 @@ void Executer::ExecuteJMP(const SingleOperandInstruction& instruction)
 
 void Executer::ExecuteBGT(const BranchInstruction& instruction)
 {
-    const Byte Z = FlagRegister.GetFlag(FlagRegister::FlagType::Zero);
-    const Byte N = FlagRegister.GetFlag(FlagRegister::FlagType::Sign);
-    const Byte V = FlagRegister.GetFlag(FlagRegister::FlagType::Overflow);
+    const Byte Z = FlagRegister.Zero;
+    const Byte N = FlagRegister.Sign;
+    const Byte V = FlagRegister.Overflow;
 
     bool f = Z || (N == 0 && V == 0);
     if (f)

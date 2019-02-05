@@ -40,12 +40,12 @@ QVariant RegistersModel::data(const QModelIndex &index, int role) const
                 if(row == GetRegistersNumber())
                 {
                     return QString("IPL:%1 T:%2 N:%3 Z:%4 V:%5 C:%6")
-                            .arg(CachedRegisters.Flags.GetFlag(FlagRegister::FlagType::InterruptPriority))
-                            .arg(CachedRegisters.Flags.GetFlag(FlagRegister::FlagType::Trap))
-                            .arg(CachedRegisters.Flags.GetFlag(FlagRegister::FlagType::Sign))
-                            .arg(CachedRegisters.Flags.GetFlag(FlagRegister::FlagType::Zero))
-                            .arg(CachedRegisters.Flags.GetFlag(FlagRegister::FlagType::Overflow))
-                            .arg(CachedRegisters.Flags.GetFlag(FlagRegister::FlagType::Carry));
+                            .arg(CachedRegisters.Flags.InterruptPriority)
+                            .arg(CachedRegisters.Flags.Trap)
+                            .arg(CachedRegisters.Flags.Sign)
+                            .arg(CachedRegisters.Flags.Zero)
+                            .arg(CachedRegisters.Flags.Overflow)
+                            .arg(CachedRegisters.Flags.Carry);
                 }
                 else
                     return QString("-1");

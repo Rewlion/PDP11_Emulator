@@ -1,40 +1,20 @@
 #pragma once
 
-#include "../../Common/Exceptions/Error.h"
 #include "../../Common/Types.h"
 
-#include <array>
-
-class FlagRegister
+struct FlagRegister
 {
-public:
-    enum class FlagType : int
+    union
     {
-        Carry = 0,
-        Overflow,
-        Zero,
-        Sign,
-        Trap,
-        InterruptPriority,
-        TYPES_NUMBER,
+        Byte Raw;
+        struct
+        {
+            Byte Carry             : 1;
+            Byte Overflow          : 1;
+            Byte Zero              : 1;
+            Byte Sign              : 1;
+            Byte Trap              : 1;
+            Byte InterruptPriority : 3;
+        };
     };
-
-public:
-    inline void SetFlag(const FlagType flag, const Byte value);
-    inline bool GetFlag(const FlagType flag) const;
-
-private:
-    std::array<bool, static_cast<size_t>(FlagType::TYPES_NUMBER)> Flags;
 };
-
-void FlagRegister::SetFlag(const FlagType flag, const Byte value)
-{
-    const bool b = (value == 0) || (value == 1);
-    CHECK(b, "wrong value for flag.");
-    Flags[static_cast<int>(flag)] = value;
-}
-
-bool FlagRegister::GetFlag(const FlagType flag) const
-{
-    return Flags[static_cast<int>(flag)];
-}
