@@ -52,6 +52,10 @@ void Executer::operator()(const NoOperandInstruction& instruction)
         ExecuteNOP(instruction);
         break;
 
+    case InstructionType::I_RTI:
+        ExecuteRTI(instruction);
+        break;
+
     default:
         NOT_IMPLEMENTED();
     }
@@ -353,6 +357,16 @@ void Executer::operator()(const BranchInstruction& instruction)
 void Executer::ExecuteNOP(const NoOperandInstruction& instruction)
 {
     //DO NOTHING
+}
+
+void Executer::ExecuteRTI(const NoOperandInstruction& instruction)
+{
+    Word pc = PopWord();
+    Word ps = PopWord();
+
+    FlagRegister.Raw = ps;
+
+    WriteWord(GetPCAddress(), pc);
 }
 
 void Executer::ExecuteMOV(const DoubleOperandInstruction& instruction)

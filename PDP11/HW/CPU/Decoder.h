@@ -30,6 +30,7 @@ private:
 private:
     const IsaTable NoOperandInstructions = {
         { 0000240, IsaEntry{ InstructionGroup::I_NoOperand, InstructionType::I_NOP, "NOP" } },
+        { 0000002, IsaEntry{ InstructionGroup::I_NoOperand, InstructionType::I_RTI,   "RTI" } },
     };
 
     const IsaTable SingleOperandInstructions = {
@@ -125,7 +126,6 @@ private:
         { 0104400, IsaEntry{ InstructionGroup::I_Other,         InstructionType::I_TRAP,  "TRAP" } },
         { 0000003, IsaEntry{ InstructionGroup::I_Other,         InstructionType::I_BPT,   "BPT" } },
         { 0000004, IsaEntry{ InstructionGroup::I_Other,         InstructionType::I_IOT,   "IOT" } },
-        { 0000002, IsaEntry{ InstructionGroup::I_Other,         InstructionType::I_RTI,   "RTI" } },
         { 0000006, IsaEntry{ InstructionGroup::I_Other,         InstructionType::I_RTT,   "RTT" } },
         //Miscellaneous
         { 0000000, IsaEntry{ InstructionGroup::I_Other,         InstructionType::I_HALT,  "HALT" } },

@@ -24,6 +24,8 @@ private:
     //NO OPERAND
     void ExecuteNOP(const NoOperandInstruction& instruction);
 
+    void ExecuteRTI(const NoOperandInstruction& instruction);
+
     // DOUBLE OPERAND
     void ExecuteCMP(const DoubleOperandInstruction& instruction);
     
