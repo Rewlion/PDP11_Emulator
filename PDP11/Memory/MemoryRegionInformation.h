@@ -5,19 +5,19 @@
 
 constexpr size_t GetSimulatedMachineMemorySize() { return 1024 * 64; }
 
-constexpr size_t GetRAMSize()                    { return 1024 * 16; }
-constexpr size_t GetVRAMSize()                   { return 1024 * 16; }
-constexpr size_t GetROMSize()                    { return 1024 * 16; }
-constexpr size_t GetRegistersSize()              { return 8 * 2; }
-constexpr size_t GetIOSize()                     { return 1024 * 16 - GetRegistersSize(); }
+constexpr Word GetRAMSize()                      { return 1024 * 16; }
+constexpr Word GetVRAMSize()                     { return 1024 * 16; }
+constexpr Word GetROMSize()                      { return 1024 * 16; }
+constexpr Word GetRegistersSize()                { return 8 * 2; }
+constexpr Word GetIOSize()                       { return 1024 * 16 - GetRegistersSize(); }
 
-constexpr size_t GetRAMBegining()                { return 0; }
-constexpr size_t GetVRAMBegining()               { return GetRAMSize(); }
-constexpr size_t GetROMBegining()                { return GetVRAMBegining() + GetVRAMSize(); }
-constexpr size_t GetIOBegining()                 { return GetROMBegining() + GetROMSize(); }
-constexpr size_t GetRegistersBegining()          { return GetIOBegining() + GetIOSize(); }
+constexpr Word GetRAMBegining()                  { return 0; }
+constexpr Word GetVRAMBegining()                 { return GetRAMSize(); }
+constexpr Word GetROMBegining()                  { return GetVRAMBegining() + GetVRAMSize(); }
+constexpr Word GetIOBegining()                   { return GetROMBegining() + GetROMSize(); }
+constexpr Word GetRegistersBegining()            { return GetIOBegining() + GetIOSize(); }
 
-constexpr size_t GetRegistersNumber()          { return 8; }
+constexpr size_t GetRegistersNumber()            { return 8; }
 
 enum class MemoryRegionType
 {

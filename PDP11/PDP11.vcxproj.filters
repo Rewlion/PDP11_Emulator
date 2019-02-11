@@ -19,6 +19,12 @@
     <Filter Include="Common\Logs">
       <UniqueIdentifier>{16b5f90f-ad67-4a06-b0da-414d6c19ad24}</UniqueIdentifier>
     </Filter>
+    <Filter Include="HW\PIC">
+      <UniqueIdentifier>{746b1e19-b257-45cd-a769-52ec2b17c699}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HW\Devices">
+      <UniqueIdentifier>{b445f9a7-bf85-4f2e-884e-baa63f0924c2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -46,6 +52,15 @@
     </ClCompile>
     <ClCompile Include="Common\Logs\BaseLog.cpp">
       <Filter>Common\Logs</Filter>
+    </ClCompile>
+    <ClCompile Include="HW\PIC\PriorityInterruptController.cpp">
+      <Filter>HW\PIC</Filter>
+    </ClCompile>
+    <ClCompile Include="HW\PIC\IRQ_Line.cpp">
+      <Filter>HW\PIC</Filter>
+    </ClCompile>
+    <ClCompile Include="HW\Devices\KeyBoard.cpp">
+      <Filter>HW\Devices</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -91,6 +106,27 @@
     </ClInclude>
     <ClInclude Include="Common\Logs\Logs.h">
       <Filter>Common\Logs</Filter>
+    </ClInclude>
+    <ClInclude Include="HW\PIC\PriorityInterruptController.h">
+      <Filter>HW\PIC</Filter>
+    </ClInclude>
+    <ClInclude Include="HW\PIC\IRQ_Line.h">
+      <Filter>HW\PIC</Filter>
+    </ClInclude>
+    <ClInclude Include="HW\PIC\InterruptVector.h">
+      <Filter>HW\PIC</Filter>
+    </ClInclude>
+    <ClInclude Include="HW\Devices\Device.h">
+      <Filter>HW\Devices</Filter>
+    </ClInclude>
+    <ClInclude Include="HW\Devices\KeyBoard.h">
+      <Filter>HW\Devices</Filter>
+    </ClInclude>
+    <ClInclude Include="HW\PIC\Interrupts.h">
+      <Filter>HW\PIC</Filter>
+    </ClInclude>
+    <ClInclude Include="HW\Devices\Input.h">
+      <Filter>HW\Devices</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

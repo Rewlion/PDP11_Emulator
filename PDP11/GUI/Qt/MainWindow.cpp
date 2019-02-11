@@ -9,11 +9,13 @@
 #include <QTableView>
 #include <QFileDialog>
 #include <QLabel>
+#include <QKeyEvent>
+#include <QtDebug>
 
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent)
+    , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     qRegisterMetaType<LogType>("LogType");
@@ -56,6 +58,16 @@ MainWindow::~MainWindow()
     delete ui;
     EmulatorThread.terminate();
     VCThread.terminate();
+}
+
+void MainWindow::keyPressEvent(QKeyEvent* event)
+{
+    Emulator.KeyInput(event->key(), InputType::Press);
+}
+
+void MainWindow::keyReleaseEvent(QKeyEvent *event)
+{
+    Emulator.KeyInput(event->key(), InputType::Release);
 }
 
 void MainWindow::OnFrameUpdate(const QImage& img)

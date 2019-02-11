@@ -147,6 +147,9 @@
     <ClCompile Include="HW\CPU\CPU.cpp" />
     <ClCompile Include="HW\CPU\Decoder.cpp" />
     <ClCompile Include="HW\CPU\Executer.cpp" />
+    <ClCompile Include="HW\Devices\KeyBoard.cpp" />
+    <ClCompile Include="HW\PIC\IRQ_Line.cpp" />
+    <ClCompile Include="HW\PIC\PriorityInterruptController.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Memory\DirectMemoryRegion.cpp" />
     <ClCompile Include="Memory\MemoryRegion.cpp" />
@@ -164,6 +167,13 @@
     <ClInclude Include="HW\CPU\Decoder.h" />
     <ClInclude Include="HW\CPU\Executer.h" />
     <ClInclude Include="HW\CPU\FlagRegister.h" />
+    <ClInclude Include="HW\Devices\Device.h" />
+    <ClInclude Include="HW\Devices\Input.h" />
+    <ClInclude Include="HW\Devices\KeyBoard.h" />
+    <ClInclude Include="HW\PIC\Interrupts.h" />
+    <ClInclude Include="HW\PIC\InterruptVector.h" />
+    <ClInclude Include="HW\PIC\IRQ_Line.h" />
+    <ClInclude Include="HW\PIC\PriorityInterruptController.h" />
     <ClInclude Include="Memory\DirectMemoryRegion.h" />
     <ClInclude Include="Memory\MemoryRegion.h" />
     <ClInclude Include="Memory\MemoryRegionInformation.h" />

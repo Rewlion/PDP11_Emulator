@@ -2,6 +2,7 @@
 #include "Common/Exceptions/Error.h"
 #include "Common/Logs/Logs.h"
 #include "HW/CPU/CPU.h"
+#include "HW/Devices/KeyBoard.h"
 #include "Memory/Unibus.h"
 #include "Memory/DirectMemoryRegion.h"
 #include "Memory/MemoryRegionInformation.h"
@@ -13,6 +14,7 @@
 Emulator::Emulator()
     : pBus(nullptr)
     , pCPU(nullptr)
+    , pKB(nullptr)
     , IsAbleToRun(false)
     , pRAM(nullptr)
     , pVRAM(nullptr)
@@ -26,6 +28,7 @@ void Emulator::Initialize()
 {
     pBus = new Unibus;
     pCPU = new CPU(pBus);
+    pKB  = new KeyBoard(pCPU->GetIRQLine(0));
     InitializeUnibus();
 
     Logger->Log(LogType::Log, "Emulator is ready.\nLoad a program to the ROM.");
@@ -51,6 +54,10 @@ void Emulator::InitializeUnibus()
     pRegisters = new DirectMemoryRegion(GetRegistersBegining(), GetRegistersSize());
     pBus->AddMemoryRegion(pRegisters);
     msg = std::string("Added Registers to unibus. Begins:") + std::to_string(GetRegistersBegining()) + std::string(" size:") + std::to_string(GetRegistersSize());
+    Logger->Log(LogType::Log, msg);
+
+    pBus->AddMemoryRegion(pKB->GetMemoryRegion());
+    msg = std::string("Added KeyBoard to unibus. Begins:") + std::to_string(GetKeyBoardBegining()) + std::string(" size:") + std::to_string(GetKeyBoardSize());
     Logger->Log(LogType::Log, msg);
 }
 
@@ -187,4 +194,9 @@ std::optional<Word> Emulator::ReadMemory(const Address at) const
         Logger->Log(LogType::Critical, e.what());
         return std::nullopt;
     }
+}
+
+void Emulator::KeyInput(const unsigned int key, const InputType status)
+{
+    pKB->OnKeyInput(key, status);
 }

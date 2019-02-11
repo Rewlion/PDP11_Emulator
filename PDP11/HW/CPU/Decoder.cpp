@@ -141,6 +141,9 @@ inline bool Decoder::IsNoOperandInstruction(const Word raw) const
 
 InstructionGroup  Decoder::GetInstructionGroup(const Word raw) const
 {
+    if (IsNoOperandInstruction(raw))
+        return InstructionGroup::I_NoOperand;
+
     if (IsDoubleOperandInstruction(raw))
         return InstructionGroup::I_DoubleOperand;
 
@@ -152,9 +155,6 @@ InstructionGroup  Decoder::GetInstructionGroup(const Word raw) const
 
     if (IsBranchInstruction(raw))
         return InstructionGroup::I_Branch;
-
-    if (IsNoOperandInstruction(raw))
-        return InstructionGroup::I_NoOperand;
 
     return InstructionGroup::I_Unknown;
 }

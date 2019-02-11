@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Memory/MemoryRegionInformation.h"
+#include "HW/Devices/Input.h"
 
 #include <vector>
 #include <string>
@@ -9,6 +10,7 @@
 class CPU;
 class Unibus;
 class MemoryRegion;
+class KeyBoard;
 
 class Emulator
 {
@@ -25,6 +27,7 @@ public:
     RawRegion            CopyROM() const;
     RawRegion            CopyVRAM() const;
     std::optional<Word>  ReadMemory(const Address at) const;
+    void                 KeyInput(const unsigned int key, const InputType status);
 
 private:
     void InitializeUnibus();
@@ -35,6 +38,8 @@ private:
 private:
     Unibus*       pBus;
     CPU*          pCPU;
+    KeyBoard*     pKB;
+
 
 	bool          IsAbleToRun;
 

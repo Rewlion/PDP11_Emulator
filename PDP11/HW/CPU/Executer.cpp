@@ -924,8 +924,9 @@ Word Executer::GetSourceAddress(const Byte source, const OperationSizeType opera
     {
         const Word subtrahend = sizeof(Word);
         Bus->Write(registerAddress, valueInRegister - subtrahend);
+        const Word address = Bus->Read(valueInRegister - subtrahend);
 
-        return valueInRegister - subtrahend;
+        return address;
     }
 
     case MemoryAddressingType::Autoincrement:
@@ -941,8 +942,9 @@ Word Executer::GetSourceAddress(const Byte source, const OperationSizeType opera
     {
         const Word addend = sizeof(Word);
         Bus->Write(registerAddress, valueInRegister + addend);
+        const Word address = Bus->Read(valueInRegister);
 
-        return valueInRegister;
+        return address;
     }
 
     case MemoryAddressingType::Index:
